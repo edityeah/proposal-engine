@@ -53,17 +53,9 @@ export default function Sidebar({
   return (
     <nav className="sidebar">
       <div className="sidebar-logo">
-        <div className="logo-mark">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M12 3C8 3 4 6 4 10c0 3 2 5.5 5 6.5V21h6v-4.5c3-1 5-3.5 5-6.5 0-4-4-7-8-7z" fill="rgba(255,255,255,0.9)" />
-            <circle cx="9" cy="10" r="1.5" fill="rgba(26,122,114,0.8)" />
-            <circle cx="15" cy="10" r="1.5" fill="rgba(26,122,114,0.8)" />
-          </svg>
-        </div>
-        <div className="logo-text-wrap">
-          <div className="logo-text-main">Conve<span>Genius</span></div>
-          <div className="logo-text-sub">Pre Sales Engine</div>
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.png" alt="ConveGenius.AI" className="sidebar-logo-img" />
+        <div className="logo-text-sub sidebar-logo-tag">Pre Sales Engine</div>
       </div>
 
       {NAV.groups.map((g) => (

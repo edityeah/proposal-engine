@@ -27,7 +27,9 @@ body {
   width: 224px; background: var(--bg-sidebar); display: flex; flex-direction: column;
   position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transition: width 0.2s;
 }
-.sidebar-logo { padding: 20px 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; }
+.sidebar-logo { padding: 16px 16px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.sidebar-logo-img { width: 100%; max-width: 168px; height: auto; background: #fff; padding: 8px 10px; border-radius: var(--radius-md); display: block; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+.sidebar-logo-tag { padding-left: 2px; }
 .logo-mark { width: 34px; height: 34px; background: linear-gradient(135deg, var(--teal-500) 0%, var(--teal-700) 100%); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(107,191,184,0.4); }
 .logo-mark svg { width: 20px; height: 20px; }
 .logo-text-wrap { display: flex; flex-direction: column; }
@@ -208,7 +210,7 @@ body {
 
 @media (max-width: 768px) {
   .sidebar { width: 60px; }
-  .logo-text-wrap, .nav-item span, .nav-badge, .sidebar-section-label, .user-name, .user-role { display: none; }
+  .logo-text-wrap, .sidebar-logo-tag, .nav-item span, .nav-badge, .sidebar-section-label, .user-name, .user-role { display: none; }
   .main-area { margin-left: 60px; }
   .nav-item { justify-content: center; padding: 10px; }
   .nav-item::before { display: none; }
