@@ -51,7 +51,7 @@ export default function AnalyticsView() {
               <div className="metric-card"><div className="metric-label"><i className="ti ti-x" /> Lost</div><div className="metric-value">{data.totals.lost}</div></div>
               <div className="metric-card"><div className="metric-label"><i className="ti ti-percentage" /> Win rate</div><div className="metric-value">{data.totals.winRate}%</div><div className="metric-sub">of decided bids</div></div>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="split-2">
               <BreakdownCard title="By state" rows={data.byState} />
               <BreakdownCard title="By product" rows={data.byProduct} />
               <BreakdownCard title="By document type" rows={data.byGenerator} />

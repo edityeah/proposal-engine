@@ -103,7 +103,7 @@ export default function OutputView({
                 <span className="spinner-ring" style={{ marginLeft: 8, verticalAlign: "middle" }} />
               </div>
             ) : compare ? (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div className="split-2">
                 <div className="output-doc markdown-body" dangerouslySetInnerHTML={{ __html: html }} />
                 <div className="output-doc markdown-body" dangerouslySetInnerHTML={{ __html: compareHtml }} />
               </div>

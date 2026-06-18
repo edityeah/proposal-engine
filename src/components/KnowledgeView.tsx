@@ -96,8 +96,8 @@ export default function KnowledgeView({ mode }: { mode: "knowledge" | "rfp" }) {
             <div className="field"><label>State</label><input value={stateVal} onChange={(e) => setStateVal(e.target.value)} placeholder="e.g. Himachal Pradesh" /></div>
             <div className="field"><label>Tags (comma-separated)</label><input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="NIPUN, assessment, VSK" /></div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 12 }}>
-            <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.txt" />
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
+            <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.txt" style={{ maxWidth: "100%" }} />
             <button className="btn btn-primary" disabled={uploading} onClick={upload}>
               <i className="ti ti-cloud-upload" /> {uploading ? "Uploading…" : "Upload"}
             </button>
@@ -109,6 +109,7 @@ export default function KnowledgeView({ mode }: { mode: "knowledge" | "rfp" }) {
         </div>
 
         <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+          <div className="table-wrap">
           <table className="data-table">
             <thead><tr><th>Document</th><th>Type</th><th>State</th><th>Words</th><th></th></tr></thead>
             <tbody>
@@ -125,6 +126,7 @@ export default function KnowledgeView({ mode }: { mode: "knowledge" | "rfp" }) {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </>

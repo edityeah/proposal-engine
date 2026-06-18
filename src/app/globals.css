@@ -17,12 +17,22 @@
   --shadow-md: 0 4px 12px rgba(61,61,143,0.10), 0 2px 4px rgba(61,61,143,0.06);
 }
 
+html, body { max-width: 100%; overflow-x: hidden; }
 body {
   font-family: 'Inter', sans-serif; background: var(--bg-page); color: var(--text-primary);
   font-size: 14px; line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column;
 }
 
-.layout { display: flex; flex: 1; min-height: 100vh; }
+/* Responsive layout utilities (single-column on mobile via the breakpoint below) */
+.split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.admin-split { display: grid; grid-template-columns: 260px 1fr; gap: 16px; }
+.check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Sidebar is position:fixed (out of flow); main-area is a normal block whose
+   width fills the viewport minus the sidebar via margin-left. Using flex here
+   would make main-area full-width AND offset, overflowing by the sidebar width. */
+.layout { display: block; min-height: 100vh; }
 .sidebar {
   width: 224px; background: var(--bg-sidebar); display: flex; flex-direction: column;
   position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transition: width 0.2s;
@@ -50,7 +60,7 @@ body {
 .user-name { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.85); }
 .user-role { font-size: 10px; color: rgba(255,255,255,0.4); }
 
-.main-area { margin-left: 224px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.main-area { margin-left: 224px; display: flex; flex-direction: column; min-height: 100vh; }
 .topbar { background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 0 28px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; box-shadow: var(--shadow-sm); }
 .topbar-left { display: flex; align-items: center; gap: 16px; }
 .topbar-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-primary); }
@@ -163,7 +173,7 @@ body {
 .upload-zone-sub { font-size: 12px; color: var(--text-muted); }
 
 .output-layout { display: grid; grid-template-columns: 1fr 280px; gap: 16px; }
-.output-doc { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; min-height: 360px; box-shadow: var(--shadow-sm); font-size: 14px; line-height: 1.8; color: var(--text-primary); }
+.output-doc { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; min-height: 360px; box-shadow: var(--shadow-sm); font-size: 14px; line-height: 1.8; color: var(--text-primary); overflow-wrap: anywhere; word-break: break-word; }
 .output-doc.streaming { white-space: pre-wrap; }
 .output-sidebar { display: flex; flex-direction: column; gap: 12px; }
 .output-side-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow-sm); }
@@ -224,11 +234,40 @@ body {
 .admin-nav-item i { font-size: 16px; }
 
 @media (max-width: 768px) {
-  .sidebar { width: 60px; }
+  .sidebar { width: 56px; }
   .logo-text-wrap, .sidebar-logo-tag, .nav-item span, .nav-badge, .sidebar-section-label, .user-name, .user-role { display: none; }
-  .main-area { margin-left: 60px; }
+  .main-area { margin-left: 56px; }
   .nav-item { justify-content: center; padding: 10px; }
   .nav-item::before { display: none; }
   .logo-mark { margin: 0 auto; }
-  .output-layout { grid-template-columns: 1fr; }
+  /* Collapsed rail is icon-only: hide the wide wordmark, keep a slim header. */
+  .sidebar-logo { padding: 14px 6px; align-items: center; }
+  .sidebar-logo-img { display: none; }
+  .sidebar-user { padding: 12px 8px; justify-content: center; }
+
+  /* Collapse all multi-column layouts */
+  .output-layout, .split-2, .admin-split, .check-grid { grid-template-columns: 1fr; }
+
+  /* Tighter page padding */
+  .page-content { padding: 16px 14px; }
+
+  /* Topbar wraps instead of overflowing; actions can go to a second line */
+  .topbar { height: auto; min-height: 56px; padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
+  .topbar-left { gap: 10px; min-width: 0; }
+  .topbar-title { font-size: 14px; overflow: hidden; text-overflow: ellipsis; }
+  .topbar-right { flex-wrap: wrap; gap: 6px; }
+  .btn { padding: 9px 14px; }
+
+  /* Step flow: show number + icon only (labels hidden) so all 4 fit */
+  .step-label { display: none; }
+  .step-item { padding: 8px 6px; gap: 5px; }
+
+  /* Cards a touch tighter */
+  .card { padding: 16px; }
+  .output-doc { padding: 18px 16px; }
+}
+
+@media (max-width: 480px) {
+  /* Stack the metric grid two-up rather than cramming */
+  .metric-grid { grid-template-columns: 1fr 1fr; }
 }

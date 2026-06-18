@@ -59,6 +59,7 @@ export default function HistoryView({ onOpen }: { onOpen: (id: string) => void }
         </div>
 
         <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+          <div className="table-wrap">
           <table className="data-table">
             <thead>
               <tr><th>Document</th><th>State</th><th>Type</th><th>Status</th><th>Created</th></tr>
@@ -77,6 +78,7 @@ export default function HistoryView({ onOpen }: { onOpen: (id: string) => void }
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </>

@@ -64,7 +64,7 @@ export default function ProductsAdmin() {
     <>
       <div className="topbar"><div className="topbar-left"><div className="topbar-title">Products &amp; prompts</div></div></div>
       <div className="page-content">
-        <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: 16 }}>
+        <div className="admin-split">
           <div>
             <div className="section-label">Product system prompts</div>
             <div className="admin-nav-list" style={{ marginBottom: 16 }}>

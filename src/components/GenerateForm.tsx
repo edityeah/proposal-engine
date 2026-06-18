@@ -229,10 +229,10 @@ export default function GenerateForm({
   return (
     <div className="page-content">
       <div className="step-flow">
-        <div className={"step-item " + stepActive(1)}><span className="step-num">1</span><i className="ti ti-file-search" /> RFP check</div>
-        <div className={"step-item " + stepActive(2)}><span className="step-num">2</span><i className="ti ti-building-bank" /> Organisation</div>
-        <div className="step-item"><span className="step-num">3</span><i className="ti ti-box" /> Product & scope</div>
-        <div className="step-item"><span className="step-num">4</span><i className="ti ti-sparkles" /> Generate</div>
+        <div className={"step-item " + stepActive(1)}><span className="step-num">1</span><i className="ti ti-file-search" /> <span className="step-label">RFP check</span></div>
+        <div className={"step-item " + stepActive(2)}><span className="step-num">2</span><i className="ti ti-building-bank" /> <span className="step-label">Organisation</span></div>
+        <div className="step-item"><span className="step-num">3</span><i className="ti ti-box" /> <span className="step-label">Product &amp; scope</span></div>
+        <div className="step-item"><span className="step-num">4</span><i className="ti ti-sparkles" /> <span className="step-label">Generate</span></div>
       </div>
 
       {/* Generator tabs */}
@@ -357,7 +357,7 @@ export default function GenerateForm({
                   <button onClick={() => checkAll(false)} className="btn btn-outline" style={{ fontSize: 11, padding: "3px 10px" }}>Clear all</button>
                 </div>
               </div>
-              <div style={{ padding: "12px 14px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, maxHeight: 280, overflowY: "auto" }}>
+              <div className="check-grid" style={{ padding: "12px 14px", maxHeight: 280, overflowY: "auto" }}>
                 {(vskProduct?.modules ?? []).map((m: { id: string; name: string; mandatory?: boolean; note?: string }) => (
                   <label key={m.id} className={"module-check-item" + (m.mandatory ? " mandatory" : "")}>
                     <input
@@ -397,7 +397,7 @@ export default function GenerateForm({
                 <div style={{ padding: "10px 14px", background: "var(--bg-page)", borderBottom: "1px solid var(--border)", fontSize: 12, fontWeight: 600 }}>
                   Surround support <span style={{ fontWeight: 400, color: "var(--text-muted)" }}>(optional)</span>
                 </div>
-                <div style={{ padding: "12px 14px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                <div className="check-grid" style={{ padding: "12px 14px" }}>
                   {(vaiProduct?.surroundSupport ?? []).map((s: string) => (
                     <label key={s} className="module-check-item">
                       <input type="checkbox" checked={checkedSurround.has(surroundId(s))} onChange={(e) => toggleSurround(surroundId(s), e.target.checked)} />

@@ -39,7 +39,7 @@ export default function CostingView() {
     <>
       <div className="topbar"><div className="topbar-left"><div className="topbar-title">Costing templates</div></div></div>
       <div className="page-content">
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div className="split-2">
           <div className="card">
             <div className="card-header"><div className="card-title"><i className="ti ti-calculator" /> Inputs</div></div>
             <div className="grid-2">
