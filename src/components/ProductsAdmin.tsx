@@ -56,6 +56,7 @@ export default function ProductsAdmin() {
       <i className={"ti " + (it.refType === "product" ? "ti-box" : "ti-file-text")} />
       <span style={{ flex: 1 }}>{it.name}</span>
       {it.override && <span className="tag tag-teal" style={{ fontSize: 9 }}>edited</span>}
+      <i className="ti ti-chevron-right chev" />
     </div>
   );
 

@@ -208,6 +208,21 @@ body {
 .login-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
 .login-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; }
 
+/* Admin nav (Products & prompts) — clearly-clickable row buttons */
+.admin-nav-list { display: flex; flex-direction: column; gap: 6px; }
+.admin-nav-item {
+  padding: 10px 12px; font-size: 13px; color: var(--text-secondary);
+  background: var(--bg-card); border: 1.5px solid var(--border); border-radius: var(--radius-md);
+  cursor: pointer; transition: all 0.13s; display: flex; align-items: center; gap: 9px;
+  box-shadow: var(--shadow-sm); width: 100%; text-align: left; font-family: inherit;
+}
+.admin-nav-item .chev { margin-left: auto; color: var(--text-hint); font-size: 15px; transition: transform 0.13s; }
+.admin-nav-item:hover { border-color: var(--navy-500); background: var(--navy-50); color: var(--navy-700); transform: translateX(2px); }
+.admin-nav-item:hover .chev { color: var(--navy-700); transform: translateX(2px); }
+.admin-nav-item.active { background: var(--navy-700); border-color: var(--navy-700); color: #fff; font-weight: 600; box-shadow: var(--shadow-md); }
+.admin-nav-item.active .chev, .admin-nav-item.active i { color: #fff; }
+.admin-nav-item i { font-size: 16px; }
+
 @media (max-width: 768px) {
   .sidebar { width: 60px; }
   .logo-text-wrap, .sidebar-logo-tag, .nav-item span, .nav-badge, .sidebar-section-label, .user-name, .user-role { display: none; }
