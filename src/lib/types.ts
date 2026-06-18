@@ -50,6 +50,7 @@ export interface SessionUser {
 
 export type Screen =
   | "generate"
+  | "chat"
   | "output"
   | "history"
   | "knowledge"

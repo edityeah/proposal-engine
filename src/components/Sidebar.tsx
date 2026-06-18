@@ -19,6 +19,7 @@ const NAV: { groups: NavGroup[] } = {
     {
       label: "Intelligence",
       items: [
+        { id: "chat", icon: "ti-message-chatbot", name: "Research chat" },
         { id: "knowledge", icon: "ti-brain", name: "Knowledge base" },
         { id: "rfplibrary", icon: "ti-file-search", name: "RFP library" },
       ],

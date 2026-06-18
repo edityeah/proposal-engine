@@ -173,3 +173,33 @@ export const curationEntries = pgTable("curation_entry", {
 });
 
 export type CurationEntry = typeof curationEntries.$inferSelect;
+
+// ─────────────────────────────────────────────────────────────
+// Phase 6 — Research Chat (saved threads + messages)
+// ─────────────────────────────────────────────────────────────
+
+export const chatThreads = pgTable("chat_thread", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull().default("New chat"),
+  model: text("model").notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+});
+
+export const chatMessages = pgTable("chat_message", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  threadId: uuid("thread_id")
+    .notNull()
+    .references(() => chatThreads.id, { onDelete: "cascade" }),
+  role: text("role").notNull(), // 'user' | 'assistant'
+  content: text("content").notNull(),
+  // Optional reference to a proposal the assistant generated in this turn.
+  proposalId: uuid("proposal_id"),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+});
+
+export type ChatThread = typeof chatThreads.$inferSelect;
+export type ChatMessage = typeof chatMessages.$inferSelect;

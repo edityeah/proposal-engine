@@ -6,6 +6,7 @@ import GenerateForm from "./GenerateForm";
 import OutputView from "./OutputView";
 import HistoryView from "./HistoryView";
 import KnowledgeView from "./KnowledgeView";
+import ChatView from "./ChatView";
 import ProductsAdmin from "./ProductsAdmin";
 import CurationStudio from "./CurationStudio";
 import CostingView from "./CostingView";
@@ -155,6 +156,7 @@ export default function AppShell({
           />
         )}
 
+        {activeScreen === "chat" && <ChatView onOpenProposal={openProposal} />}
         {activeScreen === "history" && <HistoryView onOpen={openProposal} />}
         {activeScreen === "analytics" && <AnalyticsView />}
         {activeScreen === "knowledge" && <KnowledgeView mode="knowledge" />}
