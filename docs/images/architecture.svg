@@ -1,0 +1,69 @@
+<svg viewBox="0 0 940 520" xmlns="http://www.w3.org/2000/svg" font-family="Inter, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#3D3D8F"/>
+    </marker>
+    <marker id="arrowTeal" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#2E8B82"/>
+    </marker>
+  </defs>
+
+  <text x="470" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#2D2D6B">How the Pre-Sales Engine works</text>
+
+  <!-- Pipeline stage boxes -->
+  <g font-size="13" font-weight="600" fill="#fff" text-anchor="middle">
+    <g>
+      <rect x="30" y="70" width="150" height="60" rx="12" fill="#3D3D8F"/>
+      <text x="105" y="95">1 · Research</text>
+      <text x="105" y="113" font-size="11" font-weight="400" fill="#C5C5E8">tenders · context</text>
+    </g>
+    <g>
+      <rect x="225" y="70" width="160" height="60" rx="12" fill="#2D2D6B"/>
+      <text x="305" y="95">2 · Generate</text>
+      <text x="305" y="113" font-size="11" font-weight="400" fill="#C5C5E8">AI drafts the doc</text>
+    </g>
+    <g>
+      <rect x="430" y="70" width="150" height="60" rx="12" fill="#3D3D8F"/>
+      <text x="505" y="95">3 · Refine</text>
+      <text x="505" y="113" font-size="11" font-weight="400" fill="#C5C5E8">iterate · versions</text>
+    </g>
+    <g>
+      <rect x="625" y="70" width="150" height="60" rx="12" fill="#3D3D8F"/>
+      <text x="700" y="95">4 · Export</text>
+      <text x="700" y="113" font-size="11" font-weight="400" fill="#C5C5E8">.docx · PDF</text>
+    </g>
+    <g>
+      <rect x="820" y="70" width="100" height="60" rx="12" fill="#2E8B82"/>
+      <text x="870" y="95">5 · Outcome</text>
+      <text x="870" y="113" font-size="11" font-weight="400" fill="#C2EDE9">won / lost</text>
+    </g>
+  </g>
+
+  <!-- pipeline arrows -->
+  <g stroke="#3D3D8F" stroke-width="2" fill="none" marker-end="url(#arrow)">
+    <line x1="182" y1="100" x2="222" y2="100"/>
+    <line x1="387" y1="100" x2="427" y2="100"/>
+    <line x1="582" y1="100" x2="622" y2="100"/>
+    <line x1="777" y1="100" x2="817" y2="100"/>
+  </g>
+
+  <!-- Grounding layer -->
+  <rect x="120" y="250" width="560" height="86" rx="14" fill="#EBF6F5" stroke="#A8DDD9" stroke-width="1.5"/>
+  <text x="400" y="278" text-anchor="middle" font-size="14" font-weight="700" fill="#1A7A72">Grounding &amp; intelligence layer</text>
+  <text x="400" y="300" text-anchor="middle" font-size="12" fill="#2E8B82">Swiftverse product prompts · Knowledge base (winning proposals, RFPs)</text>
+  <text x="400" y="318" text-anchor="middle" font-size="12" fill="#2E8B82">Curation studio (norms, proof points) · Live web search</text>
+
+  <!-- grounding feeds Generate (up arrow) -->
+  <path d="M305 250 L305 132" stroke="#2E8B82" stroke-width="2" fill="none" marker-end="url(#arrowTeal)"/>
+  <text x="318" y="200" font-size="11" fill="#2E8B82">grounds every draft</text>
+
+  <!-- research also uses the layer -->
+  <path d="M150 250 L120 132" stroke="#2E8B82" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arrowTeal)"/>
+
+  <!-- feedback loop: outcome -> grounding -->
+  <path d="M870 132 L870 430 L400 430 L400 340" stroke="#1A7A72" stroke-width="2" fill="none" marker-end="url(#arrowTeal)"/>
+  <text x="635" y="424" text-anchor="middle" font-size="12" font-weight="600" fill="#1A7A72">Won drafts &amp; learnings feed back — the engine gets stronger over time</text>
+
+  <!-- model picker note -->
+  <text x="470" y="478" text-anchor="middle" font-size="11" fill="#8080A0">Powered by Claude (Opus 4.8 · Sonnet 4.6 · Haiku 4.5) — streamed, server-side, org-gated access</text>
+</svg>

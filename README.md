@@ -89,6 +89,13 @@ Variables**, add a **Blob** store (auto-injects `BLOB_READ_WRITE_TOKEN`), and
 add the production redirect URI to the Google OAuth client. Run `npm run db:push`
 against the production `DATABASE_URL` once.
 
+## Documentation
+
+- [Product Overview](docs/PRODUCT_OVERVIEW.md) — what the product is, what's possible, how it works (the big picture). Also as [PDF](docs/PRODUCT_OVERVIEW.pdf).
+- [User Guide](docs/USER_GUIDE.md) — every feature, where to find it, how to use it ([PDF](docs/USER_GUIDE.pdf)).
+- [Admin Guide](docs/ADMIN_GUIDE.md) — admin-only capabilities ([PDF](docs/ADMIN_GUIDE.pdf)).
+- [Phase 1 design spec](docs/2026-06-18-phase1-design.md).
+
 ## Layout
 
 ```
