@@ -38,9 +38,17 @@ async function streamInto(
   return full;
 }
 
-export default function AppShell({ user }: { user: SessionUser }) {
-  const [screen, setScreen] = useState<Screen>("generate");
-  const [proposal, setProposal] = useState<CurrentProposal>(EMPTY);
+export default function AppShell({
+  user,
+  initialScreen,
+  initialProposal,
+}: {
+  user: SessionUser;
+  initialScreen?: Screen;
+  initialProposal?: CurrentProposal;
+}) {
+  const [screen, setScreen] = useState<Screen>(initialScreen ?? "generate");
+  const [proposal, setProposal] = useState<CurrentProposal>(initialProposal ?? EMPTY);
   const [refreshKey, setRefreshKey] = useState(0);
 
   async function handleGenerate(inputs: ProposalInputs) {
