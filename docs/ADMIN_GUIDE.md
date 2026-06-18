@@ -9,7 +9,7 @@
 
 ## 1. What an admin is
 
-Everyone who signs in with an `@convegenius.ai` account is a **member** — they can generate documents, refine, export, view history & analytics, and upload to the knowledge base / RFP library.
+Everyone who signs in with an `@convegenius.ai` account is a **member** — they can generate documents, refine, export, view history & analytics, upload to the knowledge base / RFP library, and use the **Research chat** (live web research + drafting, with a model picker). Note for admins: the chat's Opus model and web search cost more than Sonnet/Haiku — worth flagging to the team to use the lightest model that does the job.
 
 **Admins** can do all of that **plus** manage the engine itself through an **Admin** section in the sidebar that members never see:
 
@@ -115,7 +115,7 @@ The **Knowledge base** and **RFP library** (under *Intelligence*) are open to al
 - Archive low-quality or outdated documents so they don't dilute retrieval.
 - Think of it as the engine's "memory": the better the material here, the better future drafts for similar states/topics.
 
-See the User Guide §8–9 for the upload mechanics.
+See the User Guide §9–10 for the upload mechanics.
 
 ---
 

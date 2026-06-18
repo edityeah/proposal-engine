@@ -52,6 +52,7 @@ export default function AppShell({
   const [screen, setScreen] = useState<Screen>(initialScreen ?? "generate");
   const [proposal, setProposal] = useState<CurrentProposal>(initialProposal ?? EMPTY);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [navOpen, setNavOpen] = useState(false);
   const isAdmin = user.role === "admin";
   const ADMIN_SCREENS: Screen[] = ["curation", "products", "costing", "soon"];
   // Defense in depth: non-admins can't land on an admin screen even if routed there.
@@ -134,7 +135,17 @@ export default function AppShell({
 
   return (
     <div className="layout">
-      <Sidebar screen={activeScreen} onNavigate={setScreen} user={user} />
+      <button className="nav-hamburger" aria-label="Open menu" onClick={() => setNavOpen(true)}>
+        <i className="ti ti-menu-2" />
+      </button>
+      {navOpen && <div className="nav-backdrop" onClick={() => setNavOpen(false)} />}
+      <Sidebar
+        screen={activeScreen}
+        onNavigate={setScreen}
+        user={user}
+        open={navOpen}
+        onClose={() => setNavOpen(false)}
+      />
       <div className="main-area">
         {activeScreen === "generate" && (
           <>

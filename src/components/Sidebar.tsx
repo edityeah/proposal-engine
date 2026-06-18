@@ -51,14 +51,19 @@ export default function Sidebar({
   screen,
   onNavigate,
   user,
+  open,
+  onClose,
 }: {
   screen: Screen;
   onNavigate: (s: Screen) => void;
   user: SessionUser;
+  open?: boolean;
+  onClose?: () => void;
 }) {
   const isAdmin = user.role === "admin";
+  const go = (s: Screen) => { onNavigate(s); onClose?.(); };
   return (
-    <nav className="sidebar">
+    <nav className={"sidebar" + (open ? " open" : "")}>
       <div className="sidebar-logo">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="ConveGenius.AI" className="sidebar-logo-img" />
@@ -76,7 +81,7 @@ export default function Sidebar({
                 <button
                   key={it.id}
                   className={"nav-item" + (active ? " active" : "")}
-                  onClick={() => onNavigate((it.soon ? "soon" : (it.id as Screen)))}
+                  onClick={() => go(it.soon ? "soon" : (it.id as Screen))}
                   title={it.soon ? "Coming in a later phase" : it.name}
                 >
                   <i className={"ti " + it.icon} />

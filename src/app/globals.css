@@ -61,6 +61,10 @@ body {
 .user-role { font-size: 10px; color: rgba(255,255,255,0.4); }
 
 .main-area { margin-left: 224px; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* Mobile nav drawer controls — hidden on desktop, shown in the mobile breakpoint. */
+.nav-hamburger { display: none; }
+.nav-backdrop { display: none; }
 .topbar { background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 0 28px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; box-shadow: var(--shadow-sm); }
 .topbar-left { display: flex; align-items: center; gap: 16px; }
 .topbar-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-primary); }
@@ -261,16 +265,18 @@ body {
 .admin-nav-item i { font-size: 16px; }
 
 @media (max-width: 768px) {
-  .sidebar { width: 56px; }
-  .logo-text-wrap, .sidebar-logo-tag, .nav-item span, .nav-badge, .sidebar-section-label, .user-name, .user-role { display: none; }
-  .main-area { margin-left: 56px; }
-  .nav-item { justify-content: center; padding: 10px; }
-  .nav-item::before { display: none; }
-  .logo-mark { margin: 0 auto; }
-  /* Collapsed rail is icon-only: hide the wide wordmark, keep a slim header. */
-  .sidebar-logo { padding: 14px 6px; align-items: center; }
-  .sidebar-logo-img { display: none; }
-  .sidebar-user { padding: 12px 8px; justify-content: center; }
+  /* Sidebar becomes a slide-in drawer with FULL labels, opened by the hamburger. */
+  .main-area { margin-left: 0; }
+  .sidebar { transform: translateX(-100%); transition: transform 0.22s ease; z-index: 70; box-shadow: 6px 0 40px rgba(26,26,62,0.35); }
+  .sidebar.open { transform: translateX(0); }
+  .nav-hamburger {
+    display: flex; align-items: center; justify-content: center;
+    position: fixed; top: 10px; left: 10px; z-index: 60;
+    width: 38px; height: 38px; border-radius: var(--radius-md);
+    border: 1px solid var(--border); background: var(--bg-card); color: var(--navy-700);
+    cursor: pointer; box-shadow: var(--shadow-sm); font-size: 20px;
+  }
+  .nav-backdrop { display: block; position: fixed; inset: 0; background: rgba(26,26,62,0.5); z-index: 65; }
 
   /* Collapse all multi-column layouts */
   .output-layout, .split-2, .admin-split, .check-grid { grid-template-columns: 1fr; }
@@ -278,8 +284,8 @@ body {
   /* Tighter page padding */
   .page-content { padding: 16px 14px; }
 
-  /* Topbar wraps instead of overflowing; actions can go to a second line */
-  .topbar { height: auto; min-height: 56px; padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
+  /* Topbar wraps instead of overflowing; left padding clears the hamburger */
+  .topbar { height: auto; min-height: 56px; padding: 10px 14px 10px 56px; flex-wrap: wrap; gap: 8px; }
   .topbar-left { gap: 10px; min-width: 0; }
   .topbar-title { font-size: 14px; overflow: hidden; text-overflow: ellipsis; }
   .topbar-right { flex-wrap: wrap; gap: 6px; }

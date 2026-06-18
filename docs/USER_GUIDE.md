@@ -37,7 +37,8 @@ Everything is reached from the left sidebar, grouped into three sections:
 | **Generate** | Generate doc | Create a new document (the main workflow) |
 | | History | Every document the team has generated |
 | | Win/loss analytics | Win rate and breakdowns by state / product / type |
-| **Intelligence** | Knowledge base | Upload winning proposals, RFPs, SOPs (powers grounding) |
+| **Intelligence** | Research chat | Chat-based research (live web) + draft documents |
+| | Knowledge base | Upload winning proposals, RFPs, SOPs (powers grounding) |
 | | RFP library | All uploaded RFPs in one place |
 | **Admin** *(admins only)* | Curation studio | Maintain best practices, proof points & boilerplate that steer drafts |
 | | Products & prompts | Edit the AI instructions per product / document type |
@@ -46,7 +47,7 @@ Everything is reached from the left sidebar, grouped into three sections:
 
 > **Roles:** everyone who signs in is a **member** (Generate, History, Analytics, Knowledge base, RFP library). **Admins** also see the **Admin** section. The current admins are **devasheesh@convegenius.ai** and **aditya.c@convegenius.ai**. If you're a member, the Admin section simply won't appear in your sidebar.
 
-On a phone the sidebar collapses to icons — tap any icon to navigate.
+On a phone, tap the **☰ menu button** at the top-left to slide open the full navigation drawer (with labels); tap any item to go there, or tap outside the drawer to close it.
 
 ---
 
@@ -152,7 +153,22 @@ If you attached an RFP, an **RFP grounded** note confirms the draft was written 
 
 ---
 
-## 6. History
+## 6. Research chat — research & draft by chatting
+
+**Sidebar → Research chat** (under *Intelligence*). A ChatGPT-style workspace for **secondary research on the live education ecosystem** — and you can ask it to **draft documents** for you.
+
+![Research chat](images/chat.png)
+
+- **Live web search.** Ask about current tenders, RFPs, state budgets, Samagra Shiksha/PAB lines, NEP/NIPUN programmes, or competitors. It searches the web and **cites its sources**, so answers reflect *now*, not a training cutoff. Example: *"Which states have open FLN/NIPUN tenders right now?"*
+- **Pick the model** (top-right of the chat): **Opus 4.8** (best quality, default), **Sonnet 4.6** (faster, cheaper), **Haiku 4.5** (fastest, cheapest). Use Opus for hard analysis; drop to Sonnet/Haiku for quick lookups.
+- **Draft documents in the chat.** Ask it to "draft a concept note for VSK 2.0 in Bihar" and it runs the real generation pipeline, saves the draft, and shows an **Open in editor** button — which drops you into the output screen (Section 5) to refine and export.
+- **Saved threads.** Past chats are listed on the left (desktop); click to reopen, or use the trash icon to delete. **New chat** starts a fresh thread. Press **Enter** to send, **Shift+Enter** for a new line.
+
+> Web search and Opus cost more than a quick Haiku question — pick the lightest model that does the job.
+
+---
+
+## 7. History
 
 **Sidebar → History.** Every document the team has generated, newest first, with live metric cards (total, won, in-review, states).
 
@@ -162,7 +178,7 @@ Click any row to reopen that document in the output view (read, export, refine, 
 
 ---
 
-## 7. Win/loss analytics
+## 8. Win/loss analytics
 
 **Sidebar → Win/loss analytics.** A dashboard of how the team is doing.
 
@@ -173,7 +189,7 @@ Click any row to reopen that document in the output view (read, export, refine, 
 
 ---
 
-## 8. Knowledge base
+## 9. Knowledge base
 
 **Sidebar → Knowledge base.** This is what makes drafts get better over time.
 
@@ -188,7 +204,7 @@ The engine extracts the text and stores it. From then on, **when you generate fo
 
 ---
 
-## 9. RFP library
+## 10. RFP library
 
 **Sidebar → RFP library.** The same upload-and-list experience as the knowledge base, but filtered to **RFPs only** — a single place to find every RFP the team has worked on. Uploaded RFPs also feed grounding.
 
@@ -196,7 +212,7 @@ The engine extracts the text and stores it. From then on, **when you generate fo
 
 ---
 
-## 10. Admin — Curation studio *(how the engine gets stronger)*
+## 11. Admin — Curation studio *(how the engine gets stronger)*
 
 **Sidebar → Curation studio.** *(Admins only)* This is where a curator keeps the engine sharp over time. Entries here are injected into matching drafts as **authoritative guidance** — stronger than the auto-retrieved knowledge base.
 
@@ -214,7 +230,7 @@ To add or edit (right panel): pick the **type**, write a **title** and the **con
 
 ---
 
-## 11. Admin — Products & prompts
+## 12. Admin — Products & prompts
 
 **Sidebar → Products & prompts.** *(Admins only)* Edit the AI instructions behind each product and each document type.
 
@@ -228,7 +244,7 @@ To add or edit (right panel): pick the **type**, write a **title** and the **con
 
 ---
 
-## 12. Admin — Costing templates (CM2)
+## 13. Admin — Costing templates (CM2)
 
 **Sidebar → Costing templates.** *(Admins only)* A live CM2 margin calculator.
 
@@ -238,13 +254,13 @@ Enter budget (or leave blank to estimate from scale), schools/students, duration
 
 ---
 
-## 13. Team access — roles
+## 14. Team access — roles
 
 **Sidebar → Team access.** *(Admins only)* Shows the role model: everyone on `@convegenius.ai` signs in as a **member**; **admins** (devasheesh@convegenius.ai, aditya.c@convegenius.ai) additionally manage Curation studio, Products & prompts, and Costing. To change the admin list today, an engineer updates the `ALLOWED_ADMIN_EMAILS` setting; in-app promotion is a later enhancement.
 
 ---
 
-## 14. Tips for the best drafts
+## 15. Tips for the best drafts
 
 1. **Fill the Context box.** It's the biggest lever on quality — deadlines, incumbent, prior deployments, competitive intel.
 2. **Attach the RFP** whenever there is one, and use **RFP response** as the document type.
@@ -256,7 +272,7 @@ Enter budget (or leave blank to estimate from scale), schools/students, duration
 
 ---
 
-## 15. FAQ / troubleshooting
+## 16. FAQ / troubleshooting
 
 - **"Access blocked" on Google sign-in** → you're not on an `@convegenius.ai` account, or you used the wrong Google profile.
 - **My RFP won't extract text** → it's likely a scanned/image PDF. Paste the key requirements into the Context box instead.
@@ -266,6 +282,6 @@ Enter budget (or leave blank to estimate from scale), schools/students, duration
 
 ---
 
-## 16. A note on data
+## 17. A note on data
 
 Proposals, uploaded files, history, and the knowledge base are stored in the team's database and file storage and are visible to all signed-in team members. Don't upload anything you wouldn't want the whole pre-sales team to see.
