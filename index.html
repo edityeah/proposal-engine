@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CG — Pre Sales Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy-900: #1A1A3E;
+      --navy-800: #2D2D6B;
+      --navy-700: #3D3D8F;
+      --navy-600: #4E4D93;
+      --navy-500: #7A7AB8;
+      --navy-300: #C5C5E8;
+      --navy-100: #EDEDF8;
+      --navy-50:  #F5F5FC;
+
+      --teal-800: #1A7A72;
+      --teal-700: #2E8B82;
+      --teal-500: #6BBFB8;
+      --teal-300: #A8DDD9;
+      --teal-100: #C2EDE9;
+      --teal-50:  #EBF6F5;
+
+      --text-primary:   #1A1A2E;
+      --text-secondary: #4A4A6A;
+      --text-muted:     #8080A0;
+      --text-hint:      #A8A8BC;
+
+      --bg-page:    #F4F5FA;
+      --bg-card:    #FFFFFF;
+      --bg-sidebar: #2D2D6B;
+      --bg-sidebar-dark: #1A1A3E;
+
+      --border:       #E0E0EC;
+      --border-light: #EFEFFA;
+
+      --success-bg:   #EBF6F5;
+      --success-text: #1A7A72;
+      --success-border: #A8DDD9;
+
+      --warn-bg:    #FFF8ED;
+      --warn-text:  #8B5E0A;
+      --warn-border:#F5D78A;
+
+      --danger-bg:   #FFF0F0;
+      --danger-text: #A32020;
+      --danger-border:#F5C0C0;
+
+      --info-bg:   #EDEDF8;
+      --info-text: #3D3D8F;
+      --info-border:#C5C5E8;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+
+      --shadow-sm: 0 1px 3px rgba(61,61,143,0.08), 0 1px 2px rgba(61,61,143,0.04);
+      --shadow-md: 0 4px 12px rgba(61,61,143,0.10), 0 2px 4px rgba(61,61,143,0.06);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── SIDEBAR ── */
+    .layout { display: flex; flex: 1; min-height: 100vh; }
+
+    .sidebar {
+      width: 224px;
+      background: var(--bg-sidebar);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 50;
+      transition: width 0.2s;
+    }
+
+    .sidebar-logo {
+      padding: 20px 18px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-mark {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--teal-500) 0%, var(--teal-700) 100%);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(107,191,184,0.4);
+    }
+    .logo-mark svg { width: 20px; height: 20px; }
+    .logo-text-wrap { display: flex; flex-direction: column; }
+    .logo-text-main { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; color: white; letter-spacing: -0.3px; line-height: 1.2; }
+    .logo-text-main span { color: var(--teal-500); }
+    .logo-text-sub { font-size: 10px; color: rgba(255,255,255,0.45); font-weight: 400; margin-top: 1px; }
+
+    .sidebar-section { padding: 20px 10px 6px; }
+    .sidebar-section-label {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      padding: 0 8px;
+      margin-bottom: 4px;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius-md);
+      font-size: 13px; font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 1px;
+      text-decoration: none;
+      position: relative;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
+    .nav-item.active {
+      background: rgba(107,191,184,0.18);
+      color: var(--teal-500);
+      font-weight: 500;
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 3px; height: 20px;
+      background: var(--teal-500);
+      border-radius: 0 3px 3px 0;
+    }
+    .nav-item i { font-size: 17px; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto;
+      background: rgba(107,191,184,0.25);
+      color: var(--teal-500);
+      font-size: 10px; font-weight: 600;
+      padding: 2px 7px; border-radius: 20px;
+    }
+
+    .sidebar-user {
+      margin-top: auto;
+      padding: 14px 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal-500), var(--navy-500));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600; color: white; flex-shrink: 0;
+    }
+    .user-name { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.85); }
+    .user-role { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+    /* ── MAIN ── */
+    .main-area { margin-left: 224px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    .topbar {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 40;
+      box-shadow: var(--shadow-sm);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .topbar-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-primary); }
+    .topbar-breadcrumb { font-size: 12px; color: var(--text-muted); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    .page-content { padding: 28px; flex: 1; }
+
+    /* ── STEP FLOW ── */
+    .step-flow {
+      display: flex; align-items: center; gap: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 6px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .step-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: var(--radius-lg);
+      font-size: 13px; color: var(--text-muted);
+      flex: 1; justify-content: center;
+      transition: all 0.2s;
+    }
+    .step-item.done {
+      color: var(--success-text);
+    }
+    .step-item.active {
+      background: var(--navy-700);
+      color: white;
+      font-weight: 500;
+      box-shadow: var(--shadow-sm);
+    }
+    .step-item i { font-size: 15px; }
+    .step-num {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--border); color: var(--text-muted);
+      font-size: 11px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-item.active .step-num { background: rgba(255,255,255,0.25); color: white; }
+    .step-item.done .step-num { background: var(--success-bg); color: var(--success-text); }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 600; color: var(--text-primary);
+    }
+    .card-title i { font-size: 16px; color: var(--navy-700); }
+    .card-divider { height: 1px; background: var(--border-light); margin: 14px 0; }
+
+    /* ── PRODUCT SELECTOR ── */
+    .proposal-type-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 16px; border-radius: var(--radius-md);
+      border: 1.5px solid var(--border); background: var(--bg-page);
+      font-size: 13px; color: var(--text-secondary); cursor: pointer;
+      transition: all 0.15s; font-family: 'Inter', sans-serif;
+    }
+    .proposal-type-btn:hover { border-color: var(--navy-500); color: var(--navy-700); background: var(--navy-50); }
+    .proposal-type-btn.active { background: var(--navy-700); border-color: var(--navy-700); color: white; font-weight: 500; }
+    .proposal-type-btn i { font-size: 16px; }
+
+    .vsk-version-btn {
+      padding: 10px 16px; border-radius: var(--radius-md);
+      border: 1.5px solid var(--border); background: var(--bg-page);
+      font-size: 13px; color: var(--text-secondary); cursor: pointer;
+      transition: all 0.15s; text-align: left; font-family: 'Inter', sans-serif;
+      min-width: 160px; line-height: 1.4;
+    }
+    .vsk-version-btn:hover { border-color: var(--navy-500); background: var(--navy-50); }
+    .vsk-version-btn.active { background: var(--navy-50); border-color: var(--navy-700); color: var(--navy-700); box-shadow: 0 0 0 3px var(--navy-100); }
+
+    .vai-pkg-card {
+      padding: 10px 12px; border-radius: var(--radius-md);
+      border: 1.5px solid var(--border); background: var(--bg-page);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .vai-pkg-card:hover { border-color: var(--teal-500); background: var(--teal-50); }
+    .vai-pkg-card.selected { background: var(--teal-50); border-color: var(--teal-700); box-shadow: 0 0 0 3px var(--teal-100); }
+    .vai-pkg-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .vai-pkg-card.selected .vai-pkg-name { color: var(--teal-700); }
+    .vai-pkg-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .module-check-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 5px 6px; border-radius: var(--radius-sm);
+      cursor: pointer; transition: background 0.1s; font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .module-check-item:hover { background: var(--bg-page); }
+    .module-check-item.mandatory { opacity: 0.7; cursor: not-allowed; }
+    .module-check-item input[type=checkbox] { margin-top: 2px; flex-shrink: 0; accent-color: var(--navy-700); }
+    .module-check-item .mod-name { line-height: 1.4; }
+    .module-check-item .mod-mandatory { font-size: 10px; color: var(--teal-700); font-weight: 500; }
+
+    .module-search-item {
+      padding: 8px 12px; border-bottom: 1px solid var(--border-light);
+      cursor: pointer; transition: background 0.1s; font-size: 13px;
+      color: var(--text-secondary); display: flex; align-items: center; gap: 8px;
+    }
+    .module-search-item:hover { background: var(--navy-50); color: var(--navy-700); }
+    .module-search-item:last-child { border-bottom: none; }
+    .module-search-pkg { font-size: 10px; color: var(--text-muted); margin-left: auto; }
+
+    .wf-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+
+    /* ── GENERATOR TABS ── */
+    .generator-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+    .gen-tab {
+      display: flex; align-items: center; gap: 7px;
+      padding: 9px 16px; border-radius: var(--radius-md);
+      border: 1.5px solid var(--border);
+      background: var(--bg-card);
+      font-size: 13px; color: var(--text-secondary);
+      cursor: pointer; transition: all 0.15s; font-weight: 400;
+    }
+    .gen-tab:hover { border-color: var(--navy-500); color: var(--navy-700); background: var(--navy-50); }
+    .gen-tab.active { background: var(--navy-700); border-color: var(--navy-700); color: white; font-weight: 500; box-shadow: var(--shadow-sm); }
+    .gen-tab i { font-size: 16px; }
+
+    /* ── ORG SELECTOR ── */
+    .org-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+    .org-card {
+      padding: 11px 14px; border-radius: var(--radius-md);
+      border: 1.5px solid var(--border); cursor: pointer;
+      transition: all 0.15s; background: var(--bg-page);
+      display: flex; align-items: center; gap: 9px;
+    }
+    .org-card:hover { border-color: var(--teal-500); background: var(--teal-50); }
+    .org-card.selected { background: var(--teal-50); border-color: var(--teal-700); box-shadow: 0 0 0 3px var(--teal-100); }
+    .org-card i { font-size: 18px; color: var(--text-muted); }
+    .org-card.selected i { color: var(--teal-700); }
+    .org-card-name { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+    .org-card.selected .org-card-name { color: var(--teal-700); }
+
+    /* ── FORM ── */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 12px; font-weight: 500; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
+    .field label i { font-size: 13px; color: var(--text-hint); }
+    .field input, .field select, .field textarea {
+      width: 100%; font-size: 13px; font-family: 'Inter', sans-serif;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      background: var(--bg-page); color: var(--text-primary);
+      outline: none; transition: all 0.15s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--navy-600); background: white;
+      box-shadow: 0 0 0 3px var(--navy-100);
+    }
+    .field textarea { resize: vertical; min-height: 82px; line-height: 1.6; }
+    .field .hint { font-size: 11px; color: var(--text-hint); display: flex; align-items: center; gap: 3px; }
+    .field .hint i { font-size: 12px; }
+    .req { color: var(--teal-700); }
+
+    /* ── BANNERS ── */
+    .banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 16px; border-radius: var(--radius-md);
+      font-size: 13px; margin-bottom: 16px; border: 1px solid;
+    }
+    .banner i { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+    .banner.info { background: var(--info-bg); color: var(--info-text); border-color: var(--info-border); }
+    .banner.success { background: var(--success-bg); color: var(--success-text); border-color: var(--success-border); }
+    .banner.warn { background: var(--warn-bg); color: var(--warn-text); border-color: var(--warn-border); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 10px 20px; font-size: 13px; font-weight: 500;
+      border-radius: var(--radius-md); border: 1.5px solid transparent;
+      cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif;
+      text-decoration: none;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn i { font-size: 16px; }
+    .btn-primary { background: var(--navy-700); color: white; border-color: var(--navy-700); box-shadow: var(--shadow-sm); }
+    .btn-primary:hover { background: var(--navy-800); border-color: var(--navy-800); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-teal { background: var(--teal-700); color: white; border-color: var(--teal-700); box-shadow: var(--shadow-sm); }
+    .btn-teal:hover { background: var(--teal-800); }
+    .btn-outline { background: white; color: var(--text-secondary); border-color: var(--border); }
+    .btn-outline:hover { border-color: var(--navy-500); color: var(--navy-700); background: var(--navy-50); }
+    .btn-ghost { background: transparent; color: var(--text-secondary); border-color: transparent; }
+    .btn-ghost:hover { background: var(--bg-page); color: var(--text-primary); }
+    .btn-danger { background: var(--danger-bg); color: var(--danger-text); border-color: var(--danger-border); }
+
+    /* ── STATUS PILLS ── */
+    .status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .status i { font-size: 12px; }
+    .status-won { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+    .status-lost { background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); }
+    .status-draft { background: var(--bg-page); color: var(--text-muted); border: 1px solid var(--border); }
+    .status-review { background: var(--warn-bg); color: var(--warn-text); border: 1px solid var(--warn-border); }
+    .status-contract { background: var(--info-bg); color: var(--info-text); border: 1px solid var(--info-border); }
+    .status-rfp { background: #FFF5E0; color: #7B4F00; border: 1px solid #F5D78A; }
+
+    /* ── TAGS ── */
+    .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 9px; border-radius: 20px; background: var(--bg-page); color: var(--text-muted); border: 1px solid var(--border); font-weight: 500; }
+    .tag-teal { background: var(--teal-50); color: var(--teal-700); border-color: var(--teal-100); }
+    .tag-navy { background: var(--navy-100); color: var(--navy-700); border-color: var(--navy-300); }
+
+    /* ── UPLOAD ZONE ── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 20px; text-align: center;
+      background: var(--bg-page);
+      cursor: pointer; transition: all 0.2s;
+      margin-bottom: 14px;
+    }
+    .upload-zone:hover { border-color: var(--navy-500); background: var(--navy-50); }
+    .upload-zone i { font-size: 32px; color: var(--navy-500); display: block; margin-bottom: 10px; }
+    .upload-zone-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .upload-zone-sub { font-size: 12px; color: var(--text-muted); }
+
+    /* ── FILE ROWS ── */
+    .file-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--border); border-radius: var(--radius-md);
+      margin-bottom: 7px; background: var(--bg-card);
+      transition: all 0.15s;
+    }
+    .file-row:hover { border-color: var(--navy-300); box-shadow: var(--shadow-sm); }
+    .file-icon { font-size: 18px; color: var(--navy-700); flex-shrink: 0; }
+    .file-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--text-primary); }
+    .file-meta { font-size: 11px; color: var(--text-muted); }
+
+    /* ── OUTPUT PANEL ── */
+    .output-layout { display: grid; grid-template-columns: 1fr 280px; gap: 16px; }
+    .output-doc {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 28px 32px;
+      min-height: 360px; box-shadow: var(--shadow-sm);
+      font-size: 14px; line-height: 1.8; color: var(--text-primary);
+      white-space: pre-wrap;
+    }
+    .output-sidebar { display: flex; flex-direction: column; gap: 12px; }
+    .output-side-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .output-side-title { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .output-side-title i { font-size: 14px; color: var(--navy-700); }
+
+    /* ── ANNEXURE LIST ── */
+    .annexure-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border: 1px solid var(--border);
+      border-radius: var(--radius-md); margin-bottom: 5px;
+      background: var(--bg-page); font-size: 12px;
+      color: var(--text-secondary); cursor: grab;
+      transition: all 0.15s;
+    }
+    .annexure-item:hover { border-color: var(--navy-300); background: var(--navy-50); }
+    .annexure-drag { color: var(--text-hint); font-size: 14px; }
+
+    /* ── TABLE ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: left; padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-page);
+    }
+    .data-table th:first-child { border-radius: var(--radius-md) 0 0 0; }
+    .data-table th:last-child { border-radius: 0 var(--radius-md) 0 0; }
+    .data-table td { font-size: 13px; color: var(--text-secondary); padding: 12px 14px; border-bottom: 1px solid var(--border-light); }
+    .data-table tr:hover td { background: var(--bg-page); cursor: pointer; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td .doc-name { font-weight: 500; color: var(--text-primary); display: flex; align-items: center; gap: 7px; }
+
+    /* ── ADMIN TWO-COL ── */
+    .admin-layout { display: grid; grid-template-columns: 200px 1fr; gap: 16px; }
+    .admin-nav-list { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .admin-nav-item { padding: 11px 14px; font-size: 13px; color: var(--text-secondary); border-bottom: 1px solid var(--border-light); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 8px; }
+    .admin-nav-item:last-child { border-bottom: none; }
+    .admin-nav-item:hover { background: var(--navy-50); color: var(--navy-700); }
+    .admin-nav-item.active { background: var(--navy-100); color: var(--navy-700); font-weight: 600; }
+    .admin-nav-item i { font-size: 15px; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed;
+      inset: 0; background: rgba(26,26,62,0.5);
+      z-index: 200; align-items: center; justify-content: center;
+      backdrop-filter: blur(2px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg-card); border-radius: var(--radius-xl);
+      padding: 28px; width: 460px; max-width: 90vw;
+      box-shadow: 0 20px 60px rgba(26,26,62,0.2);
+      animation: modalIn 0.2s ease;
+    }
+    @keyframes modalIn { from { opacity:0; transform: translateY(-12px) scale(0.97); } to { opacity:1; transform: none; } }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .modal-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .modal-title i { font-size: 20px; color: var(--navy-700); }
+    .modal-close { width: 30px; height: 30px; border-radius: 50%; border: none; background: var(--bg-page); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.15s; }
+    .modal-close:hover { background: var(--border); color: var(--text-primary); }
+
+    /* ── LOADING ── */
+    .loading-overlay {
+      display: none; position: fixed;
+      inset: 0; background: rgba(26,26,62,0.4);
+      z-index: 300; align-items: center; justify-content: center;
+      backdrop-filter: blur(3px);
+    }
+    .loading-overlay.open { display: flex; }
+    .loading-card {
+      background: white; border-radius: var(--radius-xl);
+      padding: 32px 40px; text-align: center;
+      box-shadow: 0 20px 60px rgba(26,26,62,0.2);
+    }
+    .spinner-ring {
+      width: 52px; height: 52px; margin: 0 auto 16px;
+      border: 3px solid var(--navy-100);
+      border-top-color: var(--navy-700);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .loading-sub { font-size: 13px; color: var(--text-muted); }
+
+    /* ── SCREENS ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── ERROR ── */
+    .error-bar { display: none; }
+    .error-bar.visible {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px; border-radius: var(--radius-md);
+      background: var(--danger-bg); border: 1px solid var(--danger-border);
+      color: var(--danger-text); font-size: 13px; margin-top: 12px;
+    }
+
+    /* ── METRIC CARDS ── */
+    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .metric-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow-sm); }
+    .metric-label { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+    .metric-label i { font-size: 13px; }
+    .metric-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 26px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+    .metric-sub { font-size: 11px; color: var(--teal-700); margin-top: 4px; font-weight: 500; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .sidebar { width: 60px; }
+      .logo-text-wrap, .nav-item span, .nav-badge, .sidebar-section-label, .user-name, .user-role { display: none; }
+      .main-area { margin-left: 60px; }
+      .nav-item { justify-content: center; padding: 10px; }
+      .nav-item::before { display: none; }
+      .logo-mark { margin: 0 auto; }
+      .output-layout { grid-template-columns: 1fr; }
+      .admin-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3C8 3 4 6 4 10c0 3 2 5.5 5 6.5V21h6v-4.5c3-1 5-3.5 5-6.5 0-4-4-7-8-7z" fill="rgba(255,255,255,0.9)"/>
+          <circle cx="9" cy="10" r="1.5" fill="rgba(26,122,114,0.8)"/>
+          <circle cx="15" cy="10" r="1.5" fill="rgba(26,122,114,0.8)"/>
+        </svg>
+      </div>
+      <div class="logo-text-wrap">
+        <div class="logo-text-main">Conve<span>Genius</span></div>
+        <div class="logo-text-sub">Pre Sales Engine</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Generate</div>
+      <a class="nav-item active" onclick="showScreen('generate')" href="javascript:void(0)">
+        <i class="ti ti-sparkles"></i><span>Generate doc</span>
+      </a>
+      <a class="nav-item" onclick="showScreen('history')" href="javascript:void(0)">
+        <i class="ti ti-clock-history"></i><span>History</span>
+        <span class="nav-badge">12</span>
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Intelligence</div>
+      <a class="nav-item" onclick="showScreen('knowledge')" href="javascript:void(0)">
+        <i class="ti ti-brain"></i><span>Knowledge base</span>
+      </a>
+      <a class="nav-item" onclick="showScreen('rfplibrary')" href="javascript:void(0)">
+        <i class="ti ti-file-search"></i><span>RFP library</span>
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Admin</div>
+      <a class="nav-item" onclick="showScreen('products')" href="javascript:void(0)">
+        <i class="ti ti-adjustments-horizontal"></i><span>Products & prompts</span>
+      </a>
+      <a class="nav-item" onclick="showScreen('costing')" href="javascript:void(0)">
+        <i class="ti ti-calculator"></i><span>Costing templates</span>
+      </a>
+      <a class="nav-item" onclick="showScreen('team')" href="javascript:void(0)">
+        <i class="ti ti-users-group"></i><span>Team access</span>
+      </a>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">DK</div>
+      <div>
+        <div class="user-name">Devasheesh</div>
+        <div class="user-role">Senior — Pre Sales</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── MAIN AREA ── -->
+  <div class="main-area">
+
+    <!-- ══════════════════════════════
+         SCREEN: GENERATE
+    ══════════════════════════════ -->
+    <div id="screen-generate" class="screen active">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">Generate document</div>
+        </div>
+        <div class="topbar-right">
+          <div class="tag tag-teal"><i class="ti ti-database"></i> 5 references loaded</div>
+          <button class="btn btn-outline" onclick="handleClear()"><i class="ti ti-refresh"></i> Clear</button>
+        </div>
+      </div>
+
+      <div class="page-content">
+
+        <!-- Step flow -->
+        <div class="step-flow">
+          <div class="step-item active" id="step1">
+            <span class="step-num">1</span>
+            <i class="ti ti-file-search"></i> RFP check
+          </div>
+          <div class="step-item" id="step2">
+            <span class="step-num">2</span>
+            <i class="ti ti-building-bank"></i> Organisation
+          </div>
+          <div class="step-item" id="step3">
+            <span class="step-num">3</span>
+            <i class="ti ti-box"></i> Product & scope
+          </div>
+          <div class="step-item" id="step4">
+            <span class="step-num">4</span>
+            <i class="ti ti-sparkles"></i> Generate
+          </div>
+        </div>
+
+        <!-- RFP Banner (shows when RFP loaded) -->
+        <div id="rfp-banner" class="banner success" style="display:none">
+          <i class="ti ti-circle-check"></i>
+          <div>
+            <strong>RFP loaded — HP Vidya Utkarsh 1/2024-25</strong><br>
+            <span style="font-size:12px">Parsed 8 scope items · QCBS 80:20 evaluation · 10 month project · ₹16.08 Cr indicative · Proposal will cover all RFP sections.</span>
+          </div>
+        </div>
+
+        <!-- Generator tabs -->
+        <div class="generator-tabs" id="generatorTabs"></div>
+
+        <!-- Card 1: RFP -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-file-search"></i> Is this in response to an RFP?</div>
+            <div id="rfp-status" class="tag"><i class="ti ti-circle-dashed"></i> No RFP uploaded</div>
+          </div>
+
+          <!-- Hidden real file input -->
+          <input type="file" id="rfp-file-input" accept=".pdf,.doc,.docx,.txt"
+            style="display:none" onchange="handleRFPFile(this)" />
+
+          <!-- Upload zone — clicking triggers file picker -->
+          <div class="upload-zone" onclick="document.getElementById('rfp-file-input').click()" id="rfp-zone">
+            <i class="ti ti-cloud-upload"></i>
+            <div class="upload-zone-title">Click to select RFP from your computer</div>
+            <div class="upload-zone-sub">PDF, Word (.docx), or Text file · The proposal will address every requirement in the RFP</div>
+          </div>
+
+          <!-- RFP loaded state (shown after upload) -->
+          <div id="rfp-loaded-info" style="display:none;padding:12px 14px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md);margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <i class="ti ti-circle-check" style="font-size:18px;color:var(--teal-700)"></i>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:600;color:var(--teal-700)" id="rfp-filename">RFP loaded</div>
+                <div style="font-size:12px;color:var(--success-text);margin-top:2px" id="rfp-chars">Proposal will be structured to address all RFP requirements</div>
+              </div>
+              <button onclick="clearRFP()" class="btn btn-outline" style="font-size:12px;padding:5px 10px"><i class="ti ti-x"></i> Remove</button>
+            </div>
+          </div>
+
+          <!-- Loading indicator while reading file -->
+          <div id="rfp-reading" style="display:none;padding:10px 14px;font-size:12px;color:var(--text-muted);display:none;align-items:center;gap:8px">
+            <div style="width:14px;height:14px;border:2px solid var(--navy-300);border-top-color:var(--navy-700);border-radius:50%;animation:spin 0.7s linear infinite"></div>
+            Reading document...
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+            <button class="btn btn-primary" onclick="document.getElementById('rfp-file-input').click()">
+              <i class="ti ti-upload"></i> Select RFP file
+            </button>
+            <button class="btn btn-outline" onclick="clearRFP()">
+              <i class="ti ti-x"></i> Proceed without RFP
+            </button>
+            <span style="font-size:12px;color:var(--text-muted)">or drag & drop onto the zone above</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Organisation -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-building"></i> Submitting organisation</div>
+          </div>
+          <div class="org-cards" id="orgGrid"></div>
+          <div id="psu-context-field" style="margin-top:14px;display:none">
+            <div class="card-divider"></div>
+            <div class="field">
+              <label><i class="ti ti-info-circle"></i> PSU context <span style="font-weight:400;color:var(--text-hint)">(describe the PSU's role — feeds proposal framing)</span></label>
+              <textarea id="psuContext" placeholder="e.g. TCIL is submitting as lead bidder. ConveGenius is the technology partner providing VSK platform and AI-based assessment tools. TCIL handles procurement and contract management per GeM norms…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Product Selection — Three-tier Swiftverse selector -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-box"></i> Product / package</div>
+          </div>
+
+          <!-- Tier 1: Proposal type -->
+          <div style="margin-bottom:16px">
+            <div class="wf-label" style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">What type of proposal?</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap" id="proposalTypeRow">
+              <button class="proposal-type-btn active" id="ptype-vsk" onclick="selectProposalType('vsk')" data-type="vsk">
+                <i class="ti ti-device-desktop-analytics"></i> VSK Platform <span style="font-size:10px;opacity:0.7">(modular)</span>
+              </button>
+              <button class="proposal-type-btn" id="ptype-vai" onclick="selectProposalType('vai')" data-type="vai">
+                <i class="ti ti-package"></i> VAI Package <span style="font-size:10px;opacity:0.7">(standalone PAB bundle)</span>
+              </button>
+              <button class="proposal-type-btn" id="ptype-module" onclick="selectProposalType('module')" data-type="module">
+                <i class="ti ti-puzzle"></i> Single module / bot
+              </button>
+            </div>
+          </div>
+
+          <!-- Tier 2a: VSK Version selector -->
+          <div id="vsk-selector" style="margin-bottom:12px">
+            <div class="wf-label" style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">VSK version</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap" id="vskVersionRow">
+              <button class="vsk-version-btn active" id="vsk-btn-vsk1" onclick="selectVSKVersion('vsk1')">
+                <strong>VSK 1.0</strong><br><span style="font-size:11px;opacity:0.8">Samiksha — 8 modules</span>
+              </button>
+              <button class="vsk-version-btn" id="vsk-btn-vsk2" onclick="selectVSKVersion('vsk2')">
+                <strong>VSK 2.0</strong><br><span style="font-size:11px;opacity:0.8">Samiksha se Sudhar — 23 modules</span>
+              </button>
+              <button class="vsk-version-btn" id="vsk-btn-vsk3" onclick="selectVSKVersion('vsk3')">
+                <strong>VSK 3.0</strong><br><span style="font-size:11px;opacity:0.8">Sudhar se Safalta — 25 modules</span>
+              </button>
+            </div>
+            <!-- VSK Module checklist -->
+            <div id="vsk-modules" style="margin-top:14px;border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden">
+              <div style="padding:10px 14px;background:var(--bg-page);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+                <div style="font-size:12px;font-weight:600;color:var(--text-primary)" id="vsk-modules-title">VSK 1.0 — Select modules</div>
+                <div style="display:flex;gap:8px">
+                  <button onclick="checkAllModules(true)" style="font-size:11px;padding:3px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:white;color:var(--text-secondary);cursor:pointer">Select all</button>
+                  <button onclick="checkAllModules(false)" style="font-size:11px;padding:3px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:white;color:var(--text-secondary);cursor:pointer">Clear all</button>
+                </div>
+              </div>
+              <div id="vsk-module-list" style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:280px;overflow-y:auto"></div>
+              <div style="padding:8px 14px;background:var(--bg-page);border-top:1px solid var(--border);font-size:11px;color:var(--text-muted)" id="vsk-modules-count">0 modules selected</div>
+            </div>
+          </div>
+
+          <!-- Tier 2b: VAI Package selector -->
+          <div id="vai-selector" style="display:none;margin-bottom:12px">
+            <div class="wf-label" style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">VAI package</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px" id="vaiPackageGrid"></div>
+            <!-- VAI surround support -->
+            <div id="vai-surround" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden">
+              <div style="padding:10px 14px;background:var(--bg-page);border-bottom:1px solid var(--border)">
+                <div style="font-size:12px;font-weight:600;color:var(--text-primary)">Surround support <span style="font-weight:400;color:var(--text-muted)">(optional — include if budget permits)</span></div>
+              </div>
+              <div id="vai-surround-list" style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
+            </div>
+          </div>
+
+          <!-- Tier 2c: Single module selector -->
+          <div id="module-selector" style="display:none;margin-bottom:12px">
+            <div class="wf-label" style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">Search and select module</div>
+            <input type="text" id="module-search" placeholder="Search: NIPUN Bot, TPD Bot, FMB, TIMS, OCR, PLC…" oninput="filterModules(this.value)" style="width:100%;margin-bottom:8px" />
+            <div id="module-search-results" style="border:1px solid var(--border);border-radius:var(--radius-md);max-height:220px;overflow-y:auto"></div>
+            <div id="selected-module-display" style="display:none;margin-top:8px;padding:10px 12px;background:var(--navy-50);border:1.5px solid var(--navy-300);border-radius:var(--radius-md);font-size:13px;font-weight:500;color:var(--navy-700)"></div>
+          </div>
+
+        </div>
+
+        <!-- Card 4: State & Department -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-map-pin"></i> State & department</div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label><i class="ti ti-map"></i> State <span class="req">*</span></label>
+              <select id="state">
+                <option value="">Select state</option>
+                <option>Rajasthan</option><option>Himachal Pradesh</option>
+                <option>Assam</option><option>Delhi (GNCT)</option>
+                <option>Uttar Pradesh</option><option>Bihar</option>
+                <option>Madhya Pradesh</option><option>Uttarakhand</option>
+                <option>Odisha</option><option>Jharkhand</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label><i class="ti ti-building-community"></i> Issuing / receiving department <span class="req">*</span></label>
+              <input type="text" id="department" placeholder="e.g. Samagra Shiksha, DoSE, DHE…" />
+            </div>
+          </div>
+          <div style="margin-top:12px" class="field">
+            <label><i class="ti ti-send"></i> Submission type</label>
+            <select id="submissionType">
+              <option>Unsolicited proposal</option>
+              <option>Response to RFP</option>
+              <option>PAB proposal note</option>
+              <option>GeM bid support document</option>
+              <option>EOI response</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Card 5: Programme Scale -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-chart-bar"></i> Programme scale</div>
+          </div>
+          <div class="grid-3">
+            <div class="field">
+              <label><i class="ti ti-school"></i> Schools</label>
+              <input type="number" id="schools" placeholder="e.g. 15,000" min="0" />
+            </div>
+            <div class="field">
+              <label><i class="ti ti-stack-2"></i> Grades covered</label>
+              <input type="text" id="grades" placeholder="e.g. 1–8" />
+            </div>
+            <div class="field">
+              <label><i class="ti ti-users"></i> Students</label>
+              <input type="number" id="students" placeholder="e.g. 8,50,000" min="0" />
+            </div>
+            <div class="field">
+              <label><i class="ti ti-chalkboard"></i> Teachers</label>
+              <input type="number" id="teachers" placeholder="e.g. 35,000" min="0" />
+            </div>
+            <div class="field">
+              <label><i class="ti ti-calendar"></i> Programme duration</label>
+              <select id="duration">
+                <option value="">Select</option>
+                <option>1 year</option><option>2 years</option><option>3 years</option>
+                <option>2025–26 (1 year)</option><option>2025–27 (2 years)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label><i class="ti ti-building-factory-2"></i> Implementing partner</label>
+              <select id="implementingPartner">
+                <option value="">None / direct</option>
+                <option>RailTel</option><option>TCIL</option>
+                <option>NIC</option><option>Other CPSU</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6: Budget & Margin -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-coin-rupee"></i> Budget & margin</div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label><i class="ti ti-moneybag"></i> Available budget (₹ Cr)</label>
+              <input type="number" id="budget" placeholder="e.g. 16.08" step="0.1" min="0" />
+              <span class="hint"><i class="ti ti-info-circle"></i> Leave blank if not specified in RFP</span>
+            </div>
+            <div class="field">
+              <label><i class="ti ti-percentage"></i> Target gross margin post CM2 (%)</label>
+              <input type="number" id="cm2" placeholder="e.g. 40" step="0.5" min="0" max="100" />
+              <span class="hint"><i class="ti ti-info-circle"></i> Target blended CM2 for this engagement</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 7: Context -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="ti ti-notes"></i> Context & priorities</div>
+          </div>
+          <div class="field" style="margin-bottom:12px">
+            <label><i class="ti ti-target"></i> Key objectives or context <span style="font-weight:400;color:var(--text-hint)">(improves output significantly)</span></label>
+            <textarea id="context" placeholder="e.g. State targeting NIPUN by 2026, previous vendor exited mid-contract, PAB review in March 2026, CG has existing deployment in HP, competing bid from DDT&G expected…"></textarea>
+          </div>
+          <div class="field">
+            <label><i class="ti ti-award"></i> Key differentiators to highlight</label>
+            <textarea id="differentiators" placeholder="e.g. Existing VSK deployment in HP, APAAR integration proof, offline capability for low-connectivity districts, lower per-school cost than competitor…" style="min-height:64px"></textarea>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+          <button class="btn btn-primary" id="generateBtn" onclick="handleGenerate()" style="font-size:14px;padding:12px 28px">
+            <i class="ti ti-sparkles"></i>
+            <span id="generateLabel">Generate proposal</span>
+          </button>
+          <span style="font-size:12px;color:var(--text-hint)"><span class="req">*</span> required fields</span>
+        </div>
+
+        <div class="error-bar" id="errorBar"><i class="ti ti-alert-circle"></i><span id="errorText"></span></div>
+
+      </div><!-- /page-content -->
+    </div><!-- /screen-generate -->
+
+    <!-- ══════════════════════════════
+         SCREEN: OUTPUT
+    ══════════════════════════════ -->
+    <div id="screen-output" class="screen">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="btn btn-ghost" onclick="showScreen('generate')"><i class="ti ti-arrow-left"></i></button>
+          <div class="topbar-title" id="output-topbar-title">Proposal draft</div>
+          <span class="status status-draft" id="output-status"><i class="ti ti-pencil"></i> Draft</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-outline" onclick="handleCopyOutput()"><i class="ti ti-copy"></i> Copy</button>
+          <button class="btn btn-outline"><i class="ti ti-download"></i> Download .docx</button>
+          <button class="btn btn-teal" onclick="openModal('outcome-modal')"><i class="ti ti-flag"></i> Mark outcome</button>
+          <button class="btn btn-primary" onclick="openModal('contract-modal')"><i class="ti ti-file-contract"></i> Draft contract</button>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="banner info" id="output-rfp-note" style="display:none">
+          <i class="ti ti-info-circle"></i>
+          <span>This proposal was structured around the uploaded RFP — every section and evaluation criterion has been addressed.</span>
+        </div>
+        <div class="output-layout">
+          <div class="output-doc" id="outputBody">
+            <!-- Generated content appears here -->
+          </div>
+          <div class="output-sidebar">
+            <div class="output-side-card">
+              <div class="output-side-title"><i class="ti ti-edit"></i> Refine this draft</div>
+              <div class="field" style="margin-bottom:10px">
+                <textarea id="refinePrompt" placeholder="e.g. Make the executive summary stronger. Emphasise that CG already has a live VSK deployment in HP. Reference NIPUN targets for 2025-26…" style="min-height:100px;font-size:12px"></textarea>
+              </div>
+              <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="handleRegenerate()">
+                <i class="ti ti-refresh"></i> Regenerate section
+              </button>
+            </div>
+            <div class="output-side-card">
+              <div class="output-side-title"><i class="ti ti-paperclip"></i> Annexures</div>
+              <div id="annexure-list">
+                <div class="annexure-item"><i class="ti ti-grip-vertical annexure-drag"></i><i class="ti ti-building" style="color:var(--navy-500);font-size:14px"></i> Organisation details</div>
+                <div class="annexure-item"><i class="ti ti-grip-vertical annexure-drag"></i><i class="ti ti-user" style="color:var(--navy-500);font-size:14px"></i> Team CVs</div>
+                <div class="annexure-item"><i class="ti ti-grip-vertical annexure-drag"></i><i class="ti ti-briefcase" style="color:var(--navy-500);font-size:14px"></i> Past work orders</div>
+                <div class="annexure-item"><i class="ti ti-grip-vertical annexure-drag"></i><i class="ti ti-coin-rupee" style="color:var(--navy-500);font-size:14px"></i> Financial bid (BOQ)</div>
+              </div>
+              <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:6px;font-size:12px"><i class="ti ti-plus"></i> Add annexure</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SCREEN: HISTORY
+    ══════════════════════════════ -->
+    <div id="screen-history" class="screen">
+      <div class="topbar">
+        <div class="topbar-left"><div class="topbar-title">Generation history</div></div>
+        <div class="topbar-right">
+          <select style="font-size:13px;padding:7px 12px;border:1.5px solid var(--border);border-radius:var(--radius-md);background:white;color:var(--text-secondary);outline:none">
+            <option>All states</option><option>Himachal Pradesh</option><option>Rajasthan</option><option>Assam</option>
+          </select>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="metric-grid">
+          <div class="metric-card"><div class="metric-label"><i class="ti ti-files"></i> Total documents</div><div class="metric-value">24</div><div class="metric-sub">+3 this week</div></div>
+          <div class="metric-card"><div class="metric-label"><i class="ti ti-trophy"></i> Won</div><div class="metric-value" style="color:var(--teal-700)">8</div><div class="metric-sub">₹42 Cr value</div></div>
+          <div class="metric-card"><div class="metric-label"><i class="ti ti-clock"></i> In review</div><div class="metric-value" style="color:var(--warn-text)">5</div><div class="metric-sub">3 pending PAB</div></div>
+          <div class="metric-card"><div class="metric-label"><i class="ti ti-map-pin"></i> States covered</div><div class="metric-value">7</div><div class="metric-sub">Rajasthan, HP, Assam…</div></div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table class="data-table">
+            <thead><tr>
+              <th>Document</th><th>Product</th><th>State</th><th>Submitted by</th><th>Date</th><th>Status</th>
+            </tr></thead>
+            <tbody>
+              <tr onclick="showScreen('output')">
+                <td><div class="doc-name"><i class="ti ti-file-text" style="color:var(--navy-700)"></i> Proposal — Vidya Utkarsh RFP</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;padding-left:24px">via TCIL · 16 modules</div></td>
+                <td><span class="tag tag-navy">VSK 2.0</span></td><td>Himachal Pradesh</td><td>Devasheesh</td><td>Jun 12</td>
+                <td><span class="status status-won"><i class="ti ti-trophy"></i> Won</span></td>
+              </tr>
+              <tr>
+                <td><div class="doc-name"><i class="ti ti-file-description" style="color:var(--navy-700)"></i> PAB note — NIPUN FLN 2025</div></td>
+                <td><span class="tag tag-teal">SwiftChat</span></td><td>Rajasthan</td><td>Devasheesh</td><td>Jun 10</td>
+                <td><span class="status status-review"><i class="ti ti-clock"></i> In review</span></td>
+              </tr>
+              <tr>
+                <td><div class="doc-name"><i class="ti ti-file-text" style="color:var(--navy-700)"></i> RFP response — MIS Higher Ed</div></td>
+                <td><span class="tag tag-navy">MIS</span></td><td>Himachal Pradesh</td><td>Devasheesh</td><td>Jun 8</td>
+                <td><span class="status status-review"><i class="ti ti-clock"></i> In review</span></td>
+              </tr>
+              <tr>
+                <td><div class="doc-name"><i class="ti ti-file-text" style="color:var(--navy-700)"></i> Proposal — LEP 2.0 Uttarakhand</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;padding-left:24px">via TCIL</div></td>
+                <td><span class="tag tag-teal">SwiftChat</span></td><td>Uttarakhand</td><td>Priya</td><td>Jun 6</td>
+                <td><span class="status status-lost"><i class="ti ti-x"></i> Lost</span></td>
+              </tr>
+              <tr>
+                <td><div class="doc-name"><i class="ti ti-file-description" style="color:var(--navy-700)"></i> Exec summary — Maharashtra VSK</div></td>
+                <td><span class="tag tag-navy">VSK 2.0</span></td><td>Maharashtra</td><td>Devasheesh</td><td>May 28</td>
+                <td><span class="status status-won"><i class="ti ti-trophy"></i> Won</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SCREEN: KNOWLEDGE BASE
+    ══════════════════════════════ -->
+    <div id="screen-knowledge" class="screen">
+      <div class="topbar">
+        <div class="topbar-left"><div class="topbar-title">Knowledge base</div></div>
+        <div class="topbar-right">
+          <button class="btn btn-primary"><i class="ti ti-upload"></i> Upload document</button>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="generator-tabs" style="margin-bottom:20px">
+          <div class="gen-tab active"><i class="ti ti-trophy"></i> Winning proposals</div>
+          <div class="gen-tab"><i class="ti ti-clipboard-list"></i> RFPs issued</div>
+          <div class="gen-tab"><i class="ti ti-route"></i> Theory of change</div>
+          <div class="gen-tab"><i class="ti ti-list-check"></i> SOPs & implementation</div>
+          <div class="gen-tab"><i class="ti ti-photo"></i> Exhibits</div>
+        </div>
+        <div class="upload-zone">
+          <i class="ti ti-cloud-upload"></i>
+          <div class="upload-zone-title">Drop files here to add to knowledge base</div>
+          <div class="upload-zone-sub">Winning proposals · Past RFPs · Theory of change docs · Case studies · Exhibit files</div>
+        </div>
+        <div class="file-row">
+          <i class="ti ti-file-text file-icon" style="color:var(--teal-700)"></i>
+          <div style="flex:1">
+            <div class="file-name">MH_VSK_2.0_Maharashtra_Unified_Education_Governance.docx</div>
+            <div class="file-meta">Uploaded Jun 14 · 89,169 schools · 1.46 Cr students</div>
+          </div>
+          <span class="status status-won"><i class="ti ti-trophy"></i> Won</span>
+          <span class="tag tag-navy">VSK 2.0</span>
+          <span class="tag">Maharashtra</span>
+          <span class="tag">CG direct</span>
+        </div>
+        <div class="file-row">
+          <i class="ti ti-file-text file-icon" style="color:var(--teal-700)"></i>
+          <div style="flex:1">
+            <div class="file-name">TCIL_UK_LEP_Proposal_Revised_Uttarakhand.docx</div>
+            <div class="file-meta">Uploaded Jun 12 · LEP 2.0 · NAS 2027 target</div>
+          </div>
+          <span class="status status-lost"><i class="ti ti-x"></i> Lost</span>
+          <span class="tag tag-teal">SwiftChat</span>
+          <span class="tag">Uttarakhand</span>
+          <span class="tag tag-navy" style="background:#EAF1FA;color:#1B4F8A">TCIL</span>
+        </div>
+        <div class="file-row">
+          <i class="ti ti-table file-icon" style="color:var(--navy-500)"></i>
+          <div style="flex:1">
+            <div class="file-name">Swiftverse_Stack_2026.xlsx</div>
+            <div class="file-meta">Module list · VSK 1.0 → 3.0 · PAB pricing · Value Added Impact packages</div>
+          </div>
+          <span class="tag tag-navy">VSK 1.0–3.0</span>
+          <span class="tag">Product intel</span>
+        </div>
+        <div class="file-row">
+          <i class="ti ti-clipboard-list file-icon" style="color:var(--warn-text)"></i>
+          <div style="flex:1">
+            <div class="file-name">HP_Vidya_Utkarsh_RFP_HPSES-HQ-2024-25.pdf</div>
+            <div class="file-meta">QCBS 80:20 · 10 months · EMD ₹40L · 8 scope modules</div>
+          </div>
+          <span class="status status-rfp"><i class="ti ti-clipboard-list"></i> RFP issued</span>
+          <span class="tag tag-navy">MIS</span>
+          <span class="tag">HP</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SCREEN: PRODUCTS & PROMPTS
+    ══════════════════════════════ -->
+    <div id="screen-products" class="screen">
+      <div class="topbar">
+        <div class="topbar-left"><div class="topbar-title">Products & prompts</div></div>
+        <div class="topbar-right">
+          <button class="btn btn-primary"><i class="ti ti-plus"></i> Add product</button>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="admin-layout">
+          <div class="admin-nav-list">
+            <div class="admin-nav-item active"><i class="ti ti-device-desktop"></i> VSK Platform</div>
+            <div class="admin-nav-item"><i class="ti ti-message-chatbot"></i> SwiftChat / FLN</div>
+            <div class="admin-nav-item"><i class="ti ti-database"></i> MIS / Data systems</div>
+            <div class="admin-nav-item"><i class="ti ti-brain"></i> Swift PAL</div>
+            <div class="admin-nav-item"><i class="ti ti-school"></i> LEP</div>
+            <div class="admin-nav-item" style="color:var(--teal-700)"><i class="ti ti-plus"></i> Add product</div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="ti ti-device-desktop"></i> VSK Platform</div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-outline btn-danger" style="font-size:12px;padding:6px 12px"><i class="ti ti-trash"></i> Delete</button>
+                <button class="btn btn-primary" style="font-size:12px;padding:6px 14px"><i class="ti ti-device-floppy"></i> Save</button>
+              </div>
+            </div>
+            <div class="grid-2" style="margin-bottom:14px">
+              <div class="field"><label>Product name</label><input type="text" value="VSK Platform" /></div>
+              <div class="field"><label>Short description</label><input type="text" value="Virtual Skilling & Knowledge" /></div>
+            </div>
+            <div class="field">
+              <label><i class="ti ti-brain"></i> System prompt (core intelligence — edit to improve output quality)</label>
+              <textarea style="min-height:160px;font-size:12px;font-family:monospace">You are an expert proposal writer for ConveGenius (CG), an Indian edtech company building AI-powered learning platforms for government school education.
+
+You are writing for the VSK (Vidya Samiksha Kendra) Platform — a state-level digital infrastructure platform that enables governments to deliver FLN, teacher training, assessment, and content management through a unified portal. VSK integrates with APAAR, UDISE+, and DIKSHA.
+
+Key strengths to highlight:
+- Proven deployments: Himachal Pradesh, Rajasthan, Maharashtra, Delhi
+- APAAR and UDISE+ integration for student identity
+- Offline-capable content delivery for low-connectivity districts
+- Real-time dashboards for district and block level monitoring
+- NIC/MeitY data residency compliant
+- Three-pillar architecture: Governance → Assessment → TPD
+
+Write in formal Government of India document style. Reference Samagra Shiksha, NEP 2020, NIPUN Bharat, PM SHRI where relevant. Be specific with numbers.</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SCREEN: COSTING TEMPLATES
+    ══════════════════════════════ -->
+    <div id="screen-costing" class="screen">
+      <div class="topbar">
+        <div class="topbar-left"><div class="topbar-title">Costing templates</div></div>
+        <div class="topbar-right"><button class="btn btn-primary"><i class="ti ti-plus"></i> Add template</button></div>
+      </div>
+      <div class="page-content">
+        <div class="banner info"><i class="ti ti-lock"></i> Costing templates are admin-only. BD team members cannot see cost structure or margins — only the generated output.</div>
+        <div class="admin-layout">
+          <div class="admin-nav-list">
+            <div class="admin-nav-item active"><i class="ti ti-device-desktop"></i> VSK Platform</div>
+            <div class="admin-nav-item"><i class="ti ti-message-chatbot"></i> SwiftChat / FLN</div>
+            <div class="admin-nav-item"><i class="ti ti-database"></i> MIS / Data</div>
+            <div class="admin-nav-item"><i class="ti ti-brain"></i> Swift PAL</div>
+            <div class="admin-nav-item"><i class="ti ti-school"></i> LEP</div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="ti ti-calculator"></i> VSK Platform — cost structure</div>
+              <button class="btn btn-primary" style="font-size:12px;padding:6px 14px"><i class="ti ti-device-floppy"></i> Save</button>
+            </div>
+            <div class="grid-2" style="margin-bottom:14px">
+              <div class="field"><label><i class="ti ti-users"></i> Manpower cost (₹ L/year)</label><input type="number" value="45" /></div>
+              <div class="field"><label><i class="ti ti-code"></i> Technology license (₹ L/year)</label><input type="number" value="28" /></div>
+              <div class="field"><label><i class="ti ti-file-text"></i> Content & assessment (₹ L)</label><input type="number" value="12" /></div>
+              <div class="field"><label><i class="ti ti-cloud"></i> Cloud & infra (₹ L/year)</label><input type="number" value="8" /></div>
+              <div class="field"><label><i class="ti ti-truck-delivery"></i> Delivery & travel (₹ L)</label><input type="number" value="6" /></div>
+              <div class="field"><label><i class="ti ti-receipt-2"></i> Overheads (₹ L)</label><input type="number" value="4" /></div>
+            </div>
+            <div class="card-divider"></div>
+            <div class="grid-2">
+              <div class="field">
+                <label><i class="ti ti-percentage" style="color:var(--teal-700)"></i> Target CM2 margin (%)</label>
+                <input type="number" value="40" style="border-color:var(--teal-500);color:var(--teal-700);font-weight:600" />
+                <span class="hint" style="color:var(--teal-700)"><i class="ti ti-info-circle"></i> Minimum blended target for this product</span>
+              </div>
+              <div class="field">
+                <label><i class="ti ti-building-factory-2"></i> CPSU overhead if via PSU (%)</label>
+                <input type="number" value="12" />
+                <span class="hint"><i class="ti ti-info-circle"></i> Added on top of CG cost when routed through RailTel/TCIL</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SCREEN: RFP LIBRARY
+    ══════════════════════════════ -->
+    <div id="screen-rfplibrary" class="screen">
+      <div class="topbar">
+        <div class="topbar-left"><div class="topbar-title">RFP library</div></div>
+        <div class="topbar-right"><button class="btn btn-primary"><i class="ti ti-upload"></i> Upload RFP</button></div>
+      </div>
+      <div class="page-content">
+        <div class="banner info"><i class="ti ti-bulb"></i> RFPs uploaded here are used as reference when generating proposals. The system identifies scope items, evaluation criteria, and mandatory annexures automatically.</div>
+        <div class="file-row">
+          <i class="ti ti-file-text file-icon" style="color:var(--warn-text)"></i>
+          <div style="flex:1">
+            <div class="file-name">HP Vidya Utkarsh — EMMS RFP 2024-25</div>
+            <div class="file-meta">Samagra Shiksha HP · QCBS 80:20 · ₹16.08 Cr · 10 months · 8 scope modules · Parsed Jun 14</div>
+          </div>
+          <span class="status status-rfp"><i class="ti ti-clipboard-list"></i> Active</span>
+          <span class="tag tag-navy">MIS</span><span class="tag">HP</span>
+          <button class="btn btn-outline" style="font-size:11px;padding:5px 10px"><i class="ti ti-sparkles"></i> Use for proposal</button>
+        </div>
+        <div class="file-row">
+          <i class="ti ti-file-text file-icon" style="color:var(--warn-text)"></i>
+          <div style="flex:1">
+            <div class="file-name">Rajasthan AVSAR SETU — PAB RFP 2025</div>
+            <div class="file-meta">Samagra Shiksha Rajasthan · PAB 2025 submission · FLN focus</div>
+          </div>
+          <span class="status status-rfp"><i class="ti ti-clipboard-list"></i> Active</span>
+          <span class="tag tag-teal">SwiftChat</span><span class="tag">Rajasthan</span>
+          <button class="btn btn-outline" style="font-size:11px;padding:5px 10px"><i class="ti ti-sparkles"></i> Use for proposal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SCREEN: TEAM ACCESS
+    ══════════════════════════════ -->
+    <div id="screen-team" class="screen">
+      <div class="topbar">
+        <div class="topbar-left"><div class="topbar-title">Team access</div></div>
+        <div class="topbar-right"><button class="btn btn-primary"><i class="ti ti-user-plus"></i> Invite member</button></div>
+      </div>
+      <div class="page-content">
+        <div class="banner info"><i class="ti ti-shield-lock"></i> Only whitelisted email addresses can access this tool. Admin role can edit products, prompts, and costing templates. Member role can generate documents only.</div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table class="data-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Last active</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><div class="doc-name"><div class="user-avatar" style="width:26px;height:26px;font-size:10px;display:inline-flex;margin-right:8px">DK</div>Devasheesh</div></td><td style="color:var(--text-muted)">devasheesh@convegenius.ai</td><td><span class="status status-contract">Admin</span></td><td>Today</td><td><button class="btn btn-ghost" style="font-size:12px;color:var(--text-muted)"><i class="ti ti-dots"></i></button></td></tr>
+              <tr><td><div class="doc-name"><div class="user-avatar" style="width:26px;height:26px;font-size:10px;display:inline-flex;margin-right:8px;background:linear-gradient(135deg,var(--teal-500),var(--teal-700))">PR</div>Priya</div></td><td style="color:var(--text-muted)">priya@convegenius.ai</td><td><span class="status status-draft">Member</span></td><td>Jun 12</td><td><button class="btn btn-ghost" style="font-size:12px;color:var(--text-muted)"><i class="ti ti-dots"></i></button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /layout -->
+
+<!-- ══ MODALS ══ -->
+
+<!-- Outcome modal -->
+<div class="modal-overlay" id="outcome-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title"><i class="ti ti-flag"></i> Mark outcome</div>
+      <button class="modal-close" onclick="closeModal('outcome-modal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <button class="btn btn-teal" style="justify-content:center;padding:14px"><i class="ti ti-trophy"></i> Won</button>
+      <button class="btn btn-outline" style="justify-content:center;padding:14px;border-color:var(--danger-border);color:var(--danger-text)"><i class="ti ti-x"></i> Lost</button>
+    </div>
+    <div class="field" style="margin-bottom:14px">
+      <label><i class="ti ti-notes"></i> Reason / learning <span style="font-weight:400;color:var(--text-hint)">(becomes intelligence for future proposals)</span></label>
+      <textarea placeholder="e.g. Won on technical score 82/100. Key differentiators: existing HP deployment, APAAR integration, lower per-school cost. Lost ground on manpower plan section — need stronger PMU detail next time…" style="min-height:100px"></textarea>
+    </div>
+    <div style="margin-bottom:14px">
+      <div class="field" style="margin-bottom:8px"><label><i class="ti ti-database"></i> Add to knowledge base as</label></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--navy-700)"> Winning proposal</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" style="accent-color:var(--navy-700)"> Exhibit / proof point</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" style="accent-color:var(--navy-700)"> RFP reference</label>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="closeModal('outcome-modal')"><i class="ti ti-device-floppy"></i> Save & add to knowledge base</button>
+  </div>
+</div>
+
+<!-- Contract modal -->
+<div class="modal-overlay" id="contract-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title"><i class="ti ti-file-contract"></i> Draft contract</div>
+      <button class="modal-close" onclick="closeModal('contract-modal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="banner success" style="margin-bottom:16px"><i class="ti ti-info-circle"></i> Contract will be generated from the winning proposal and RFP terms. Review payment schedule, SLA clauses, and penalty terms before sharing.</div>
+    <div class="field" style="margin-bottom:14px">
+      <label>Include sections</label>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:4px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--navy-700)"> Scope of work & deliverables</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--navy-700)"> Payment schedule & milestones</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--navy-700)"> SLA requirements & penalties</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--navy-700)"> IP & data ownership rights</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--navy-700)"> Exit management & transition</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" style="accent-color:var(--navy-700)"> Force majeure</label>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="closeModal('contract-modal');handleGenerate()"><i class="ti ti-sparkles"></i> Generate contract draft</button>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-card">
+    <div class="spinner-ring"></div>
+    <div class="loading-title" id="loading-title">Generating your document…</div>
+    <div class="loading-sub" id="loading-sub">Referencing 5 winning proposals from knowledge base</div>
+  </div>
+</div>
+
+<!-- Config files -->
+<script src="config/products.js" onerror="console.error('Failed to load config/products.js — check file exists in deployment')"></script>
+<script src="config/generators.js" onerror="console.error('Failed to load config/generators.js — check file exists in deployment')"></script>
+
+<script>
+  // ── State ──
+  var selectedProductId = null;
+  var selectedGeneratorId = null;
+  var selectedOrgId = 'direct';
+  var rfpLoaded = false;
+  var proposalType = 'vsk';
+  var selectedVSKVersion = 'vsk1';
+  var selectedVAIPackage = null;
+  var selectedSingleModule = null;
+  var checkedModules = new Set();
+  var checkedSurround = new Set();
+
+  var ORGS = [
+    { id: 'direct', name: 'CG direct', icon: 'ti-building' },
+    { id: 'tcil', name: 'TCIL', icon: 'ti-building-factory-2' },
+    { id: 'railtel', name: 'RailTel', icon: 'ti-radio-tower' },
+    { id: 'nic', name: 'NIC', icon: 'ti-server' },
+    { id: 'other', name: 'Other PSU', icon: 'ti-building-bank' }
+  ];
+
+  function boot() {
+    renderGenerators();
+    renderOrgs();
+    renderVSKModules('vsk1');
+    renderVAIPackages();
+    renderModuleSearch('');
+    selectedProductId = 'vsk1';
+  }
+
+  // ── Generator tabs ──
+  function renderGenerators() {
+    var container = document.getElementById('generatorTabs');
+    if (!container) return;
+    container.innerHTML = '';
+    GENERATORS.forEach(function(g, i) {
+      var btn = document.createElement('button');
+      btn.className = 'gen-tab' + (i === 0 ? ' active' : '');
+      btn.innerHTML = '<i class="ti ' + g.icon + '"></i> ' + g.label;
+      btn.onclick = function() {
+        document.querySelectorAll('.gen-tab').forEach(function(t) { t.classList.remove('active'); });
+        btn.classList.add('active');
+        selectedGeneratorId = g.id;
+        var lbl = document.getElementById('generateLabel');
+        if (lbl) lbl.textContent = g.label;
+      };
+      container.appendChild(btn);
+    });
+    selectedGeneratorId = GENERATORS[0].id;
+  }
+
+  // ── Proposal type selector ──
+  function selectProposalType(type) {
+    proposalType = type;
+    document.querySelectorAll('.proposal-type-btn').forEach(function(b) { b.classList.remove('active'); });
+    var btn = document.getElementById('ptype-' + type);
+    if (btn) btn.classList.add('active');
+    var vskSel = document.getElementById('vsk-selector');
+    var vaiSel = document.getElementById('vai-selector');
+    var modSel = document.getElementById('module-selector');
+    if (vskSel) vskSel.style.display = type === 'vsk' ? 'block' : 'none';
+    if (vaiSel) vaiSel.style.display = type === 'vai' ? 'block' : 'none';
+    if (modSel) modSel.style.display = type === 'module' ? 'block' : 'none';
+    if (type === 'vsk') selectedProductId = selectedVSKVersion;
+    if (type === 'vai') selectedProductId = selectedVAIPackage;
+    if (type === 'module') selectedProductId = selectedSingleModule;
+  }
+
+  // ── VSK version ──
+  function selectVSKVersion(versionId) {
+    selectedVSKVersion = versionId;
+    selectedProductId = versionId;
+    document.querySelectorAll('.vsk-version-btn').forEach(function(b) { b.classList.remove('active'); });
+    var btn = document.getElementById('vsk-btn-' + versionId);
+    if (btn) btn.classList.add('active');
+    renderVSKModules(versionId);
+  }
+
+  function renderVSKModules(versionId) {
+    var product = null;
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      if (PRODUCTS[i].id === versionId) { product = PRODUCTS[i]; break; }
+    }
+    if (!product || !product.modules) return;
+    var list = document.getElementById('vsk-module-list');
+    var title = document.getElementById('vsk-modules-title');
+    if (title) title.textContent = product.name + ' — ' + product.tagline + ' — select modules for this proposal';
+    if (!list) return;
+    list.innerHTML = '';
+    checkedModules = new Set();
+    product.modules.forEach(function(mod) {
+      checkedModules.add(mod.id);
+      var item = document.createElement('label');
+      item.className = 'module-check-item' + (mod.mandatory ? ' mandatory' : '');
+      var mandatory = mod.mandatory ? ' <span class="mod-mandatory">● Required</span>' : '';
+      var note = mod.note ? '<br><span style="font-size:10px;color:var(--text-hint);font-style:italic">' + mod.note + '</span>' : '';
+      var checked = mod.mandatory ? 'checked disabled' : 'checked';
+      item.innerHTML = '<input type="checkbox" ' + checked + ' onchange="toggleModule(\'' + mod.id + '\',this.checked)"><div class="mod-name">' + mod.name + mandatory + note + '</div>';
+      list.appendChild(item);
+    });
+    updateModuleCount();
+  }
+
+  function toggleModule(modId, checked) {
+    if (checked) checkedModules.add(modId);
+    else checkedModules.delete(modId);
+    updateModuleCount();
+  }
+
+  function checkAllModules(check) {
+    var product = null;
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      if (PRODUCTS[i].id === selectedVSKVersion) { product = PRODUCTS[i]; break; }
+    }
+    if (!product) return;
+    checkedModules = new Set();
+    product.modules.forEach(function(mod) {
+      if (check || mod.mandatory) checkedModules.add(mod.id);
+    });
+    document.querySelectorAll('#vsk-module-list input[type=checkbox]:not(:disabled)').forEach(function(cb) {
+      cb.checked = check;
+    });
+    updateModuleCount();
+  }
+
+  function updateModuleCount() {
+    var el = document.getElementById('vsk-modules-count');
+    if (el) el.textContent = checkedModules.size + ' modules selected';
+  }
+
+  // ── VAI packages ──
+  function renderVAIPackages() {
+    var grid = document.getElementById('vaiPackageGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    var vaiProducts = PRODUCTS.filter(function(p) { return p.type === 'vai'; });
+    vaiProducts.forEach(function(p, i) {
+      var card = document.createElement('div');
+      card.className = 'vai-pkg-card' + (i === 0 ? ' selected' : '');
+      card.innerHTML = '<div class="vai-pkg-name">' + p.name + '</div><div class="vai-pkg-desc">' + p.description + '</div>';
+      card.onclick = function() {
+        document.querySelectorAll('.vai-pkg-card').forEach(function(c) { c.classList.remove('selected'); });
+        card.classList.add('selected');
+        selectedVAIPackage = p.id;
+        if (proposalType === 'vai') selectedProductId = p.id;
+        renderVAISurround(p);
+      };
+      grid.appendChild(card);
+    });
+    if (vaiProducts.length > 0) {
+      selectedVAIPackage = vaiProducts[0].id;
+      renderVAISurround(vaiProducts[0]);
+    }
+  }
+
+  function renderVAISurround(product) {
+    var container = document.getElementById('vai-surround');
+    var list = document.getElementById('vai-surround-list');
+    if (!container || !list) return;
+    if (!product.surroundSupport || product.surroundSupport.length === 0) {
+      container.style.display = 'none'; return;
+    }
+    container.style.display = 'block';
+    list.innerHTML = '';
+    checkedSurround = new Set();
+    product.surroundSupport.forEach(function(s) {
+      var item = document.createElement('label');
+      item.className = 'module-check-item';
+      var sid = s.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      item.innerHTML = '<input type="checkbox" onchange="toggleSurround(\'' + sid + '\',this.checked)"><div class="mod-name">' + s + '</div>';
+      list.appendChild(item);
+    });
+  }
+
+  function toggleSurround(id, checked) {
+    if (checked) checkedSurround.add(id);
+    else checkedSurround.delete(id);
+  }
+
+  // ── Single module search ──
+  function renderModuleSearch(query) {
+    var results = document.getElementById('module-search-results');
+    if (!results) return;
+    var filtered = query.trim() === ''
+      ? INDIVIDUAL_MODULES.slice(0, 20)
+      : INDIVIDUAL_MODULES.filter(function(m) {
+          return m.name.toLowerCase().indexOf(query.toLowerCase()) >= 0 ||
+                 m.package.toLowerCase().indexOf(query.toLowerCase()) >= 0;
+        });
+    results.innerHTML = '';
+    if (filtered.length === 0) {
+      results.innerHTML = '<div style="padding:12px;font-size:12px;color:var(--text-muted)">No modules found</div>';
+      return;
+    }
+    filtered.forEach(function(m) {
+      var item = document.createElement('div');
+      item.className = 'module-search-item';
+      item.innerHTML = '<span>' + m.name + '</span><span class="module-search-pkg">' + m.package + '</span>';
+      item.onclick = function() {
+        selectedSingleModule = m.id;
+        if (proposalType === 'module') selectedProductId = m.id;
+        var disp = document.getElementById('selected-module-display');
+        if (disp) {
+          disp.style.display = 'block';
+          disp.innerHTML = '<i class="ti ti-check" style="color:var(--teal-700)"></i> Selected: <strong>' + m.name + '</strong> from ' + m.package;
+        }
+        var inp = document.getElementById('module-search');
+        if (inp) inp.value = m.name;
+        results.innerHTML = '';
+      };
+      results.appendChild(item);
+    });
+  }
+
+  function filterModules(query) { renderModuleSearch(query); }
+
+  // ── Org selector ──
+  function renderOrgs() {
+    var grid = document.getElementById('orgGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    ORGS.forEach(function(o) {
+      var card = document.createElement('div');
+      card.className = 'org-card' + (o.id === 'direct' ? ' selected' : '');
+      card.innerHTML = '<i class="ti ' + o.icon + '"></i><div class="org-card-name">' + o.name + '</div>';
+      card.onclick = function() {
+        document.querySelectorAll('.org-card').forEach(function(c) { c.classList.remove('selected'); });
+        card.classList.add('selected');
+        selectedOrgId = o.id;
+        var psuField = document.getElementById('psu-context-field');
+        if (psuField) psuField.style.display = o.id !== 'direct' ? 'block' : 'none';
+      };
+      grid.appendChild(card);
+    });
+  }
+
+  // ── RFP ──
+  // ── RFP file handling ──
+  var rfpText = '';
+
+  function handleRFPFile(input) {
+    var file = input.files[0];
+    if (!file) return;
+    loadRFPFile(file);
+  }
+
+  function loadRFPFile(file) {
+    var reading = document.getElementById('rfp-reading');
+    var zone = document.getElementById('rfp-zone');
+    if (reading) reading.style.display = 'flex';
+    if (zone) zone.style.display = 'none';
+
+    var reader = new FileReader();
+
+    // For text/plain files
+    if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+      reader.onload = function(e) { setRFPLoaded(file.name, e.target.result); };
+      reader.onerror = function() { showError('Could not read file. Try a .txt version of the RFP.'); clearRFP(); };
+      reader.readAsText(file);
+      return;
+    }
+
+    // For PDF and Word — read as text via readAsText (extracts raw text)
+    // This works for text-based PDFs and .docx files
+    reader.onload = function(e) {
+      var text = '';
+      try {
+        // Try reading raw text — works for many PDFs and text-based docs
+        text = e.target.result;
+        // Clean up common PDF artifacts
+        text = text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, ' ');
+        text = text.replace(/\s+/g, ' ').trim();
+        if (text.length < 100) {
+          // Scanned PDF with no extractable text
+          setRFPLoaded(file.name, null, 'Could not extract text from this file. Please try a text-based PDF or paste the RFP content in the Context field below.');
+          return;
+        }
+      } catch(err) {
+        text = '';
+      }
+      setRFPLoaded(file.name, text);
+    };
+    reader.onerror = function() {
+      showError('Could not read the file. Please try a .txt or text-based PDF.');
+      clearRFP();
+    };
+    reader.readAsText(file);
+  }
+
+  function setRFPLoaded(filename, text, warning) {
+    rfpLoaded = true;
+    rfpText = text || '';
+    var reading = document.getElementById('rfp-reading');
+    var zone = document.getElementById('rfp-zone');
+    var info = document.getElementById('rfp-loaded-info');
+    var fnEl = document.getElementById('rfp-filename');
+    var charsEl = document.getElementById('rfp-chars');
+    var status = document.getElementById('rfp-status');
+    var banner = document.getElementById('rfp-banner');
+
+    if (reading) reading.style.display = 'none';
+    if (zone) zone.style.display = 'none';
+    if (info) info.style.display = 'block';
+    if (fnEl) fnEl.textContent = filename;
+    if (charsEl) {
+      if (warning) {
+        charsEl.textContent = warning;
+        charsEl.style.color = 'var(--warn-text)';
+      } else {
+        var words = rfpText.split(' ').length;
+        charsEl.textContent = words.toLocaleString('en-IN') + ' words extracted — proposal will address all RFP requirements';
+      }
+    }
+    if (status) {
+      status.innerHTML = '<i class="ti ti-circle-check"></i> ' + filename;
+      status.className = 'tag tag-teal';
+    }
+    if (banner) banner.style.display = 'flex';
+
+    // Auto-set submission type
+    var st = document.getElementById('submissionType');
+    if (st) st.value = 'Response to RFP';
+  }
+
+  function clearRFP() {
+    rfpLoaded = false;
+    rfpText = '';
+    var status = document.getElementById('rfp-status');
+    if (status) { status.innerHTML = '<i class="ti ti-circle-dashed"></i> No RFP uploaded'; status.className = 'tag'; }
+    var zone = document.getElementById('rfp-zone');
+    if (zone) zone.style.display = 'block';
+    var info = document.getElementById('rfp-loaded-info');
+    if (info) info.style.display = 'none';
+    var reading = document.getElementById('rfp-reading');
+    if (reading) reading.style.display = 'none';
+    var banner = document.getElementById('rfp-banner');
+    if (banner) banner.style.display = 'none';
+    var fileInput = document.getElementById('rfp-file-input');
+    if (fileInput) fileInput.value = '';
+  }
+
+  // Drag and drop support
+  document.addEventListener('DOMContentLoaded', function() {
+    var zone = document.getElementById('rfp-zone');
+    if (!zone) return;
+    zone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      zone.style.borderColor = 'var(--navy-700)';
+      zone.style.background = 'var(--navy-50)';
+    });
+    zone.addEventListener('dragleave', function() {
+      zone.style.borderColor = '';
+      zone.style.background = '';
+    });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      zone.style.borderColor = '';
+      zone.style.background = '';
+      var file = e.dataTransfer.files[0];
+      if (file) loadRFPFile(file);
+    });
+  });
+
+  // ── Screen navigation ──
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+    var screen = document.getElementById('screen-' + name);
+    if (screen) screen.classList.add('active');
+    var screenMap = { generate: 0, history: 1, knowledge: 2, rfplibrary: 3, products: 4, costing: 5, team: 6, output: 0 };
+    var idx = screenMap[name];
+    if (idx !== undefined) {
+      var navItems = document.querySelectorAll('.nav-item');
+      if (navItems[idx]) navItems[idx].classList.add('active');
+    }
+    window.scrollTo(0, 0);
+  }
+
+  function openModal(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.add('open');
+  }
+
+  function closeModal(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('open');
+  }
+
+  // ── Collect form inputs ──
+  function collectInputs() {
+    var product = null;
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      if (PRODUCTS[i].id === selectedProductId) { product = PRODUCTS[i]; break; }
+    }
+    var generator = null;
+    for (var j = 0; j < GENERATORS.length; j++) {
+      if (GENERATORS[j].id === selectedGeneratorId) { generator = GENERATORS[j]; break; }
+    }
+
+    // Build selected module names
+    var selectedModuleNames = [];
+    var selectedSurroundNames = [];
+    if (proposalType === 'vsk' && product && product.modules) {
+      product.modules.forEach(function(m) {
+        if (checkedModules.has(m.id)) selectedModuleNames.push(m.name);
+      });
+    }
+    if (proposalType === 'vai' && product) {
+      if (product.coreModules) selectedModuleNames = product.coreModules.slice();
+      if (product.surroundSupport) {
+        product.surroundSupport.forEach(function(s) {
+          var sid = s.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+          if (checkedSurround.has(sid)) selectedSurroundNames.push(s);
+        });
+      }
+    }
+    var singleModuleName = null;
+    if (proposalType === 'module' && selectedSingleModule) {
+      for (var k = 0; k < INDIVIDUAL_MODULES.length; k++) {
+        if (INDIVIDUAL_MODULES[k].id === selectedSingleModule) {
+          singleModuleName = INDIVIDUAL_MODULES[k].name + ' (from ' + INDIVIDUAL_MODULES[k].package + ')';
+          break;
+        }
+      }
+    }
+
+    // Send only essential fields — NOT the full product object (too large)
+    return {
+      // Product essentials only
+      productId: product ? product.id : '',
+      productName: product ? product.name : '',
+      productTagline: product ? (product.tagline || product.description || '') : '',
+      productObjective: product ? (product.objective || '') : '',
+      systemPrompt: product ? (product.systemPrompt || '') : '',
+      // Generator essentials only
+      generatorId: generator ? generator.id : '',
+      generatorLabel: generator ? generator.label : '',
+      generatorPrefix: generator ? generator.promptPrefix : '',
+      // Selection state
+      proposalType: proposalType,
+      selectedModuleNames: selectedModuleNames,
+      selectedSurroundNames: selectedSurroundNames,
+      singleModuleName: singleModuleName,
+      // Form fields
+      state: document.getElementById('state') ? document.getElementById('state').value : '',
+      department: document.getElementById('department') ? document.getElementById('department').value : '',
+      submissionType: document.getElementById('submissionType') ? document.getElementById('submissionType').value : '',
+      schools: document.getElementById('schools') ? document.getElementById('schools').value : '',
+      grades: document.getElementById('grades') ? document.getElementById('grades').value : '',
+      students: document.getElementById('students') ? document.getElementById('students').value : '',
+      teachers: document.getElementById('teachers') ? document.getElementById('teachers').value : '',
+      duration: document.getElementById('duration') ? document.getElementById('duration').value : '',
+      implementingPartner: document.getElementById('implementingPartner') ? document.getElementById('implementingPartner').value : '',
+      budget: document.getElementById('budget') ? document.getElementById('budget').value : '',
+      cm2: document.getElementById('cm2') ? document.getElementById('cm2').value : '',
+      context: document.getElementById('context') ? document.getElementById('context').value : '',
+      differentiators: document.getElementById('differentiators') ? document.getElementById('differentiators').value : '',
+      org: selectedOrgId,
+      psuContext: document.getElementById('psuContext') ? document.getElementById('psuContext').value : '',
+      rfpLoaded: rfpLoaded,
+      rfpText: rfpText ? rfpText.substring(0, 12000) : ''
+    };
+  }
+
+  function validate(inputs) {
+    if (!inputs.state) return 'Please select a state.';
+    if (!inputs.department || !inputs.department.trim()) return 'Please enter the issuing department.';
+    if (!inputs.productId) return 'Please select a product.';
+    if (!inputs.systemPrompt) return 'Product system prompt missing — please refresh and try again.';
+    return null;
+  }
+
+  function showError(msg) {
+    var bar = document.getElementById('errorBar');
+    var txt = document.getElementById('errorText');
+    if (bar) bar.classList.add('visible');
+    if (txt) txt.textContent = msg;
+  }
+
+  function hideError() {
+    var bar = document.getElementById('errorBar');
+    if (bar) bar.classList.remove('visible');
+  }
+
+  function setLoading(on, title, sub) {
+    var ov = document.getElementById('loading-overlay');
+    if (ov) {
+      if (on) {
+        var t = document.getElementById('loading-title');
+        var s = document.getElementById('loading-sub');
+        if (t) t.textContent = title || 'Generating your document...';
+        if (s) s.textContent = sub || 'Referencing knowledge base...';
+        ov.classList.add('open');
+      } else {
+        ov.classList.remove('open');
+      }
+    }
+    var btn = document.getElementById('generateBtn');
+    if (btn) btn.disabled = on;
+  }
+
+  async function handleGenerate() {
+    var inputs = collectInputs();
+    var err = validate(inputs);
+    if (err) { showError(err); return; }
+    hideError();
+    setLoading(true, 'Generating ' + (inputs.generatorLabel || 'document') + '...', 'Using knowledge base...');
+    try {
+      var response = await fetch('/.netlify/functions/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(inputs)
+      });
+      if (!response.ok) {
+        var errMsg = 'Server error ' + response.status;
+        try {
+          var d = await response.json();
+          errMsg = d.error || errMsg;
+        } catch(jsonErr) {
+          // Response wasn't JSON (HTML timeout page etc)
+          if (response.status === 524 || response.status === 502) {
+            errMsg = 'Request timed out. Claude is taking too long. Try with fewer modules selected or shorter context.';
+          } else {
+            errMsg = 'Server error ' + response.status + '. Check Netlify function logs.';
+          }
+        }
+        throw new Error(errMsg);
+      }
+      var data = await response.json();
+      setLoading(false);
+      var body = document.getElementById('outputBody');
+      if (body) body.textContent = data.output;
+      var titleEl = document.getElementById('output-topbar-title');
+      if (titleEl) titleEl.textContent = (inputs.generatorLabel || 'Output') + ' — ' + (inputs.productName || '') + ' · ' + inputs.state;
+      var rfpNote = document.getElementById('output-rfp-note');
+      if (rfpNote) rfpNote.style.display = inputs.rfpLoaded ? 'flex' : 'none';
+      showScreen('output');
+    } catch(e) {
+      setLoading(false);
+      showError(e.message);
+    }
+  }
+
+  async function handleRegenerate() {
+    var prompt = document.getElementById('refinePrompt');
+    if (!prompt || !prompt.value.trim()) return;
+    setLoading(true, 'Refining section...', prompt.value.substring(0, 60) + '...');
+    await new Promise(function(r) { setTimeout(r, 1800); });
+    setLoading(false);
+  }
+
+  function handleCopyOutput() {
+    var body = document.getElementById('outputBody');
+    if (!body) return;
+    var text = body.textContent;
+    navigator.clipboard.writeText(text).then(function() {
+      var btn = document.querySelector('.topbar-right .btn-outline');
+      if (!btn) return;
+      var orig = btn.innerHTML;
+      btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
+      btn.style.color = 'var(--teal-700)';
+      setTimeout(function() { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
+    });
+  }
+
+  function handleClear() {
+    document.querySelectorAll('input[type=text], input[type=number], textarea').forEach(function(el) { el.value = ''; });
+    document.querySelectorAll('select').forEach(function(el) { el.selectedIndex = 0; });
+    clearRFP();
+    hideError();
+    selectProposalType('vsk');
+    selectVSKVersion('vsk1');
+    document.querySelectorAll('.org-card').forEach(function(c, i) { c.classList.toggle('selected', i === 0); });
+    selectedOrgId = 'direct';
+    var psuField = document.getElementById('psu-context-field');
+    if (psuField) psuField.style.display = 'none';
+  }
+
+  // ── Modal backdrop close ──
+  document.querySelectorAll('.modal-overlay').forEach(function(m) {
+    m.addEventListener('click', function(e) { if (e.target === m) m.classList.remove('open'); });
+  });
+
+  // ── Safe boot with error handling ──
+  function safeBoot() {
+    if (typeof PRODUCTS === 'undefined' || typeof GENERATORS === 'undefined') {
+      document.body.insertAdjacentHTML('afterbegin',
+        '<div style="position:fixed;top:0;left:0;right:0;background:#A32020;color:white;padding:12px 20px;font-size:13px;z-index:9999">' +
+        '<strong>Config error:</strong> Could not load product data. Check browser console (F12) for details.</div>'
+      );
+      return;
+    }
+    try { boot(); }
+    catch(e) { console.error('Boot error:', e); }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', safeBoot);
+  } else {
+    safeBoot();
+  }
+
+</script>
+</body>
+</html>
