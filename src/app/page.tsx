@@ -12,6 +12,7 @@ export default async function Home() {
         name: session.user.name,
         email: session.user.email,
         image: session.user.image,
+        role: (session.user as { role?: string }).role ?? "member",
       }}
     />
   );

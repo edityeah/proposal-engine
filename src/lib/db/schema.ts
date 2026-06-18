@@ -148,3 +148,28 @@ export const promptOverrides = pgTable(
 
 export type KnowledgeDocument = typeof knowledgeDocuments.$inferSelect;
 export type PromptOverride = typeof promptOverrides.$inferSelect;
+
+// ─────────────────────────────────────────────────────────────
+// Phase 5 — Curation Studio: admin-maintained guidance injected into drafts
+// ─────────────────────────────────────────────────────────────
+
+// kind: 'best_practice' (how-to / norms), 'proof_point' (facts/numbers/awards),
+// 'boilerplate' (reusable approved sections). Scope filters control where each
+// entry is injected; empty docTypes/products = applies everywhere.
+export const curationEntries = pgTable("curation_entry", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  kind: text("kind").notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  tags: jsonb("tags").$type<string[]>().default([]),
+  docTypes: jsonb("doc_types").$type<string[]>().default([]), // generator ids
+  products: jsonb("products").$type<string[]>().default([]), // product ids
+  state: text("state"), // null = all states
+  enabled: integer("enabled").notNull().default(1), // 1 on, 0 off
+  status: text("status").notNull().default("active"), // active | archived
+  updatedBy: text("updated_by").references(() => users.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+});
+
+export type CurationEntry = typeof curationEntries.$inferSelect;

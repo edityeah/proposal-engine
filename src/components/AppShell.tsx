@@ -7,6 +7,7 @@ import OutputView from "./OutputView";
 import HistoryView from "./HistoryView";
 import KnowledgeView from "./KnowledgeView";
 import ProductsAdmin from "./ProductsAdmin";
+import CurationStudio from "./CurationStudio";
 import CostingView from "./CostingView";
 import AnalyticsView from "./AnalyticsView";
 import type { CurrentProposal, ProposalInputs, Screen, SessionUser } from "@/lib/types";
@@ -50,6 +51,10 @@ export default function AppShell({
   const [screen, setScreen] = useState<Screen>(initialScreen ?? "generate");
   const [proposal, setProposal] = useState<CurrentProposal>(initialProposal ?? EMPTY);
   const [refreshKey, setRefreshKey] = useState(0);
+  const isAdmin = user.role === "admin";
+  const ADMIN_SCREENS: Screen[] = ["curation", "products", "costing", "soon"];
+  // Defense in depth: non-admins can't land on an admin screen even if routed there.
+  const activeScreen: Screen = !isAdmin && ADMIN_SCREENS.includes(screen) ? "generate" : screen;
 
   async function handleGenerate(inputs: ProposalInputs) {
     const title = `${inputs.generatorLabel || "Document"} — ${inputs.productName} · ${inputs.state}`;
@@ -128,9 +133,9 @@ export default function AppShell({
 
   return (
     <div className="layout">
-      <Sidebar screen={screen} onNavigate={setScreen} user={user} />
+      <Sidebar screen={activeScreen} onNavigate={setScreen} user={user} />
       <div className="main-area">
-        {screen === "generate" && (
+        {activeScreen === "generate" && (
           <>
             <div className="topbar">
               <div className="topbar-left"><div className="topbar-title">Generate document</div></div>
@@ -139,7 +144,7 @@ export default function AppShell({
           </>
         )}
 
-        {screen === "output" && (
+        {activeScreen === "output" && (
           <OutputView
             proposal={proposal}
             refreshKey={refreshKey}
@@ -150,22 +155,35 @@ export default function AppShell({
           />
         )}
 
-        {screen === "history" && <HistoryView onOpen={openProposal} />}
-        {screen === "analytics" && <AnalyticsView />}
-        {screen === "knowledge" && <KnowledgeView mode="knowledge" />}
-        {screen === "rfplibrary" && <KnowledgeView mode="rfp" />}
-        {screen === "products" && <ProductsAdmin />}
-        {screen === "costing" && <CostingView />}
+        {activeScreen === "history" && <HistoryView onOpen={openProposal} />}
+        {activeScreen === "analytics" && <AnalyticsView />}
+        {activeScreen === "knowledge" && <KnowledgeView mode="knowledge" />}
+        {activeScreen === "rfplibrary" && <KnowledgeView mode="rfp" />}
+        {activeScreen === "curation" && <CurationStudio />}
+        {activeScreen === "products" && <ProductsAdmin />}
+        {activeScreen === "costing" && <CostingView />}
 
-        {screen === "soon" && (
+        {activeScreen === "soon" && (
           <>
             <div className="topbar"><div className="topbar-left"><div className="topbar-title">Team access</div></div></div>
             <div className="page-content">
               <div className="card">
-                <div className="card-title"><i className="ti ti-users-group" /> Team access</div>
+                <div className="card-title"><i className="ti ti-users-group" /> Roles &amp; access</div>
                 <p style={{ marginTop: 10, color: "var(--text-secondary)" }}>
-                  Anyone with an <strong>@convegenius.ai</strong> Google account can sign in today.
-                  Fine-grained roles and an invite list are a later enhancement.
+                  Anyone with an <strong>@convegenius.ai</strong> Google account can sign in as a
+                  <strong> member</strong> (generate, history, knowledge base, RFP library).
+                </p>
+                <p style={{ marginTop: 8, color: "var(--text-secondary)" }}>
+                  <strong>Admins</strong> additionally manage Curation studio, Products &amp; prompts,
+                  and Costing. Current admins:
+                </p>
+                <ul style={{ margin: "8px 0 0 20px", color: "var(--text-secondary)" }}>
+                  <li>devasheesh@convegenius.ai</li>
+                  <li>aditya.c@convegenius.ai</li>
+                </ul>
+                <p style={{ marginTop: 10, fontSize: 12, color: "var(--text-muted)" }}>
+                  To change admins, update <code>ALLOWED_ADMIN_EMAILS</code> in the environment.
+                  Per-user promotion from this screen is a later enhancement.
                 </p>
               </div>
             </div>

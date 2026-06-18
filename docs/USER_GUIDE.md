@@ -39,9 +39,12 @@ Everything is reached from the left sidebar, grouped into three sections:
 | | Win/loss analytics | Win rate and breakdowns by state / product / type |
 | **Intelligence** | Knowledge base | Upload winning proposals, RFPs, SOPs (powers grounding) |
 | | RFP library | All uploaded RFPs in one place |
-| **Admin** | Products & prompts | Edit the AI instructions per product / document type |
+| **Admin** *(admins only)* | Curation studio | Maintain best practices, proof points & boilerplate that steer drafts |
+| | Products & prompts | Edit the AI instructions per product / document type |
 | | Costing templates | The CM2 margin calculator |
-| | Team access | *(coming in a later release)* |
+| | Team access | Who's an admin vs a member |
+
+> **Roles:** everyone who signs in is a **member** (Generate, History, Analytics, Knowledge base, RFP library). **Admins** also see the **Admin** section. The current admins are **devasheesh@convegenius.ai** and **aditya.c@convegenius.ai**. If you're a member, the Admin section simply won't appear in your sidebar.
 
 On a phone the sidebar collapses to icons — tap any icon to navigate.
 
@@ -193,9 +196,27 @@ The engine extracts the text and stores it. From then on, **when you generate fo
 
 ---
 
-## 10. Admin — Products & prompts
+## 10. Admin — Curation studio *(how the engine gets stronger)*
 
-**Sidebar → Products & prompts.** *(Admin)* Edit the AI instructions behind each product and each document type.
+**Sidebar → Curation studio.** *(Admins only)* This is where a curator keeps the engine sharp over time. Entries here are injected into matching drafts as **authoritative guidance** — stronger than the auto-retrieved knowledge base.
+
+![Curation studio](images/curation.png)
+
+Three kinds of entries (left column, grouped):
+
+- **Best practice / norm** — rules the model should follow (e.g. "Always anchor PAB notes to the state's Annual Work Plan and cite NAS/UDISE+ evidence").
+- **Proof point / fact** — approved figures to reuse verbatim (deployments, awards, reference numbers).
+- **Boilerplate** — standard approved sections (SLA, capability) to adapt.
+
+To add or edit (right panel): pick the **type**, write a **title** and the **content**, then **scope** it — tick the document types and/or products it applies to, and optionally a state. Leave the ticks empty to apply everywhere. Use the **toggle** to enable/disable an entry without deleting it, and the **trash** icon to archive it.
+
+> Keep proof points current here and every future draft uses the right numbers. This is the single best lever for improving quality over time — invest in it.
+
+---
+
+## 11. Admin — Products & prompts
+
+**Sidebar → Products & prompts.** *(Admins only)* Edit the AI instructions behind each product and each document type.
 
 ![Products & prompts screen](images/products.png)
 
@@ -207,9 +228,9 @@ The engine extracts the text and stores it. From then on, **when you generate fo
 
 ---
 
-## 11. Admin — Costing templates (CM2)
+## 12. Admin — Costing templates (CM2)
 
-**Sidebar → Costing templates.** *(Admin)* A live CM2 margin calculator.
+**Sidebar → Costing templates.** *(Admins only)* A live CM2 margin calculator.
 
 ![Costing screen](images/costing.png)
 
@@ -217,13 +238,13 @@ Enter budget (or leave blank to estimate from scale), schools/students, duration
 
 ---
 
-## 12. Team access
+## 13. Team access — roles
 
-*Coming in a later release.* Today, anyone with an `@convegenius.ai` Google account can sign in. Fine-grained roles and an invite list will come later.
+**Sidebar → Team access.** *(Admins only)* Shows the role model: everyone on `@convegenius.ai` signs in as a **member**; **admins** (devasheesh@convegenius.ai, aditya.c@convegenius.ai) additionally manage Curation studio, Products & prompts, and Costing. To change the admin list today, an engineer updates the `ALLOWED_ADMIN_EMAILS` setting; in-app promotion is a later enhancement.
 
 ---
 
-## 13. Tips for the best drafts
+## 14. Tips for the best drafts
 
 1. **Fill the Context box.** It's the biggest lever on quality — deadlines, incumbent, prior deployments, competitive intel.
 2. **Attach the RFP** whenever there is one, and use **RFP response** as the document type.
@@ -235,7 +256,7 @@ Enter budget (or leave blank to estimate from scale), schools/students, duration
 
 ---
 
-## 14. FAQ / troubleshooting
+## 15. FAQ / troubleshooting
 
 - **"Access blocked" on Google sign-in** → you're not on an `@convegenius.ai` account, or you used the wrong Google profile.
 - **My RFP won't extract text** → it's likely a scanned/image PDF. Paste the key requirements into the Context box instead.
@@ -245,6 +266,6 @@ Enter budget (or leave blank to estimate from scale), schools/students, duration
 
 ---
 
-## 15. A note on data
+## 16. A note on data
 
 Proposals, uploaded files, history, and the knowledge base are stored in the team's database and file storage and are visible to all signed-in team members. Don't upload anything you wouldn't want the whole pre-sales team to see.

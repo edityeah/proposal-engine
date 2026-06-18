@@ -3,7 +3,8 @@ import { buildUserPrompt, validateInputs, type GenerateInputs } from "@/lib/prom
 import { streamProposal, PROPOSAL_MODEL } from "@/lib/anthropic";
 import { createProposal, finalizeProposalOutput } from "@/lib/db/queries";
 import { getOverride, retrieveContext } from "@/lib/db/knowledge";
-import { buildRetrievalBlock } from "@/lib/retrieval";
+import { curationForGeneration } from "@/lib/db/curation";
+import { buildRetrievalBlock, buildCurationBlock } from "@/lib/retrieval";
 import { computeCm2 } from "@/lib/costing";
 
 export const runtime = "nodejs";
@@ -48,6 +49,19 @@ export async function POST(req: Request) {
     if (block) userPrompt += block;
   } catch {
     // retrieval is best-effort — never block generation on it.
+  }
+
+  // Phase 5: inject curated guidance (best practices, proof points, boilerplate).
+  try {
+    const entries = await curationForGeneration({
+      generatorId: (inputs as { generatorId?: string }).generatorId,
+      productId: inputs.productId,
+      state: inputs.state,
+    });
+    const block = buildCurationBlock(entries);
+    if (block) userPrompt += block;
+  } catch {
+    // best-effort.
   }
 
   // CM2 numbers are INTERNAL — only feed them to the finance memo generator,

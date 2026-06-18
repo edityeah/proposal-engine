@@ -3,7 +3,10 @@
 import { signOut } from "next-auth/react";
 import type { Screen, SessionUser } from "@/lib/types";
 
-const NAV: { groups: { label: string; items: { id: Screen | string; icon: string; name: string; soon?: boolean }[] }[] } = {
+interface NavItem { id: Screen | string; icon: string; name: string; soon?: boolean }
+interface NavGroup { label: string; items: NavItem[]; adminOnly?: boolean }
+
+const NAV: { groups: NavGroup[] } = {
   groups: [
     {
       label: "Generate",
@@ -22,10 +25,12 @@ const NAV: { groups: { label: string; items: { id: Screen | string; icon: string
     },
     {
       label: "Admin",
+      adminOnly: true,
       items: [
+        { id: "curation", icon: "ti-books", name: "Curation studio" },
         { id: "products", icon: "ti-adjustments-horizontal", name: "Products & prompts" },
         { id: "costing", icon: "ti-calculator", name: "Costing templates" },
-        { id: "team", icon: "ti-users-group", name: "Team access", soon: true },
+        { id: "team", icon: "ti-users-group", name: "Team access" },
       ],
     },
   ],
@@ -50,6 +55,7 @@ export default function Sidebar({
   onNavigate: (s: Screen) => void;
   user: SessionUser;
 }) {
+  const isAdmin = user.role === "admin";
   return (
     <nav className="sidebar">
       <div className="sidebar-logo">
@@ -58,26 +64,28 @@ export default function Sidebar({
         <div className="logo-text-sub sidebar-logo-tag">Pre Sales Engine</div>
       </div>
 
-      {NAV.groups.map((g) => (
-        <div className="sidebar-section" key={g.label}>
-          <div className="sidebar-section-label">{g.label}</div>
-          {g.items.map((it) => {
-            const active = screen === it.id;
-            return (
-              <button
-                key={it.id}
-                className={"nav-item" + (active ? " active" : "")}
-                onClick={() => onNavigate((it.soon ? "soon" : (it.id as Screen)))}
-                title={it.soon ? "Coming in a later phase" : it.name}
-              >
-                <i className={"ti " + it.icon} />
-                <span>{it.name}</span>
-                {it.soon && <span className="nav-badge">soon</span>}
-              </button>
-            );
-          })}
-        </div>
-      ))}
+      {NAV.groups
+        .filter((g) => !g.adminOnly || isAdmin)
+        .map((g) => (
+          <div className="sidebar-section" key={g.label}>
+            <div className="sidebar-section-label">{g.label}</div>
+            {g.items.map((it) => {
+              const active = screen === it.id;
+              return (
+                <button
+                  key={it.id}
+                  className={"nav-item" + (active ? " active" : "")}
+                  onClick={() => onNavigate((it.soon ? "soon" : (it.id as Screen)))}
+                  title={it.soon ? "Coming in a later phase" : it.name}
+                >
+                  <i className={"ti " + it.icon} />
+                  <span>{it.name}</span>
+                  {it.soon && <span className="nav-badge">soon</span>}
+                </button>
+              );
+            })}
+          </div>
+        ))}
 
       <div className="sidebar-user">
         <div className="user-avatar">
@@ -85,7 +93,7 @@ export default function Sidebar({
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="user-name">{user.name || user.email}</div>
-          <div className="user-role">Pre Sales</div>
+          <div className="user-role">{isAdmin ? "Admin · Pre Sales" : "Pre Sales"}</div>
         </div>
         <button
           className="nav-item"

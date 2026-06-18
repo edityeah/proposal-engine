@@ -45,6 +45,7 @@ export interface SessionUser {
   name?: string | null;
   email?: string | null;
   image?: string | null;
+  role?: string;
 }
 
 export type Screen =
@@ -54,6 +55,7 @@ export type Screen =
   | "knowledge"
   | "rfplibrary"
   | "products"
+  | "curation"
   | "costing"
   | "analytics"
   | "soon";

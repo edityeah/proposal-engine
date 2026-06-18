@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/admin";
 import { listOverrides, setOverride } from "@/lib/db/knowledge";
 import { PRODUCTS } from "@/data/products";
 import { GENERATORS } from "@/data/generators";
@@ -8,8 +8,8 @@ export const runtime = "nodejs";
 // Returns the editable catalogue (products + generators) merged with any saved
 // overrides, so the admin UI shows the effective prompt for each.
 export async function GET() {
-  const session = await auth();
-  if (!session?.user?.id) return Response.json({ error: "Not authenticated" }, { status: 401 });
+  const a = await requireAdmin();
+  if (a.error) return a.error;
 
   const overrides = await listOverrides();
   const byKey = new Map(overrides.map((o) => [o.refType + ":" + o.refId, o.content]));
@@ -33,8 +33,8 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
-  const session = await auth();
-  if (!session?.user?.id) return Response.json({ error: "Not authenticated" }, { status: 401 });
+  const a = await requireAdmin();
+  if (a.error) return a.error;
 
   const body = (await req.json().catch(() => ({}))) as {
     refType?: string;
@@ -47,6 +47,6 @@ export async function PUT(req: Request) {
   if (!["product", "generator"].includes(body.refType)) {
     return Response.json({ error: "Invalid refType" }, { status: 400 });
   }
-  await setOverride(body.refType, body.refId, body.content, session.user.id);
+  await setOverride(body.refType, body.refId, body.content, a.session.user.id);
   return Response.json({ ok: true });
 }
