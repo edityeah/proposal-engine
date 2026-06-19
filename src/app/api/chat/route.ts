@@ -11,7 +11,7 @@ import {
 import { createThread, getThread, getMessages, addMessage, renameThread } from "@/lib/db/chat";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 300;
 
 // allowed_callers:["direct"] keeps web search usable on every model in the
 // picker (Haiku doesn't support the programmatic-tool-calling path the tool

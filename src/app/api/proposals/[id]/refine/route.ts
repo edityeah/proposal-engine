@@ -4,7 +4,7 @@ import { getOverride } from "@/lib/db/knowledge";
 import { streamProposal } from "@/lib/anthropic";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function POST(
   req: Request,

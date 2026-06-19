@@ -8,7 +8,9 @@ import { buildRetrievalBlock, buildCurationBlock } from "@/lib/retrieval";
 import { computeCm2 } from "@/lib/costing";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+// Full proposals can take 1–2 minutes; 60s killed the function mid-generation
+// (losing the unsaved output). Needs Vercel Pro (Hobby caps at 60s).
+export const maxDuration = 300;
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -109,18 +111,33 @@ export async function POST(req: Request) {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      let full = "";
+      let acc = "";
+      let lastSave = 0;
+      let saving = false;
+      // Checkpoint the partial output every few seconds so a timeout (e.g. the
+      // Hobby 60s cap) still leaves a usable draft, not an empty row.
+      const checkpoint = async () => {
+        if (saving) return;
+        saving = true;
+        try { await finalizeProposalOutput(proposal.id, acc); } catch {}
+        saving = false;
+      };
       try {
-        full = await streamProposal({
+        await streamProposal({
           system: systemPrompt,
           user: userPrompt,
-          onText: (delta) => controller.enqueue(encoder.encode(delta)),
+          onText: (delta) => {
+            acc += delta;
+            controller.enqueue(encoder.encode(delta));
+            const now = Date.now();
+            if (now - lastSave > 4000) { lastSave = now; void checkpoint(); }
+          },
         });
-        await finalizeProposalOutput(proposal.id, full);
+        await finalizeProposalOutput(proposal.id, acc);
       } catch (e) {
         const msg = e instanceof Error ? e.message : "Generation failed";
         controller.enqueue(encoder.encode("\n\n[ERROR] " + msg));
-        if (full) await finalizeProposalOutput(proposal.id, full).catch(() => {});
+        if (acc) await finalizeProposalOutput(proposal.id, acc).catch(() => {});
       } finally {
         controller.close();
       }
