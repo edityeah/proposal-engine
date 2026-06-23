@@ -26,9 +26,10 @@
     "mammoth": "^1.11.0",
     "marked": "^16.4.0",
     "next": "^15.5.4",
-    "pdfkit": "^0.17.2",
     "next-auth": "^5.0.0-beta.29",
+    "openai": "^6.44.0",
     "pdf-parse": "^1.1.1",
+    "pdfkit": "^0.17.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

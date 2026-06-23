@@ -4,10 +4,12 @@ import {
   CHAT_MODELS,
   DEFAULT_CHAT_MODEL,
   isValidChatModel,
+  providerFor,
   chatSystemPrompt,
   GENERATE_DOC_TOOL,
   runGenerateDocument,
 } from "@/lib/chat";
+import { runOpenAIChat } from "@/lib/openai-chat";
 import { createThread, getThread, getMessages, addMessage, renameThread } from "@/lib/db/chat";
 
 export const runtime = "nodejs";
@@ -59,6 +61,18 @@ export async function POST(req: Request) {
       let generatedProposalId: string | null = null;
 
       try {
+        if (providerFor(model) === "openai") {
+          await runOpenAIChat({
+            model,
+            system: chatSystemPrompt(),
+            history: prior.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+            userMessage: message,
+            userId,
+            onText: (d) => { visibleText += d; send({ t: "text", d }); },
+            onToolStatus: (name) => send({ t: "tool", name, status: "running" }),
+            onDoc: (pid, title) => { generatedProposalId = pid; send({ t: "doc", proposalId: pid, title }); },
+          });
+        } else {
         for (let turn = 0; turn < MAX_TURNS; turn++) {
           const mstream = anthropic.messages.stream({
             model,
@@ -106,6 +120,7 @@ export async function POST(req: Request) {
             if (results.length) { messages.push({ role: "user", content: results }); continue; }
           }
           break; // end_turn or nothing more to do
+        }
         }
 
         await addMessage(threadId, "assistant", visibleText || "(no text response)", generatedProposalId);

@@ -7,19 +7,34 @@ import { curationForGeneration } from "@/lib/db/curation";
 import { buildRetrievalBlock, buildCurationBlock } from "@/lib/retrieval";
 import { createProposal, finalizeProposalOutput } from "@/lib/db/queries";
 
+export type Provider = "anthropic" | "openai";
 export interface ChatModel {
   id: string;
   label: string;
+  provider: Provider;
 }
 
 export const CHAT_MODELS: ChatModel[] = [
-  { id: "claude-opus-4-8", label: "Opus 4.8 · best quality" },
-  { id: "claude-sonnet-4-6", label: "Sonnet 4.6 · fast & balanced" },
-  { id: "claude-haiku-4-5", label: "Haiku 4.5 · fastest" },
+  // Claude
+  { id: "claude-fable-5", label: "Claude Fable 5 · most capable", provider: "anthropic" },
+  { id: "claude-opus-4-8", label: "Claude Opus 4.8 · best quality", provider: "anthropic" },
+  { id: "claude-sonnet-4-6", label: "Claude Sonnet 4.6 · fast & balanced", provider: "anthropic" },
+  { id: "claude-haiku-4-5", label: "Claude Haiku 4.5 · fastest", provider: "anthropic" },
+  // OpenAI
+  { id: "gpt-5.5", label: "GPT-5.5 · best (OpenAI)", provider: "openai" },
+  { id: "gpt-5.4-mini", label: "GPT-5.4 mini · fast (OpenAI)", provider: "openai" },
+  { id: "gpt-5.4-nano", label: "GPT-5.4 nano · fastest (OpenAI)", provider: "openai" },
+  { id: "gpt-4.1", label: "GPT-4.1 (OpenAI)", provider: "openai" },
+  { id: "gpt-4o", label: "GPT-4o (OpenAI)", provider: "openai" },
+  { id: "o3", label: "o3 · reasoning (OpenAI)", provider: "openai" },
+  { id: "o3-mini", label: "o3-mini · reasoning (OpenAI)", provider: "openai" },
 ];
 export const DEFAULT_CHAT_MODEL = "claude-opus-4-8";
 export function isValidChatModel(m: string): boolean {
   return CHAT_MODELS.some((x) => x.id === m);
+}
+export function providerFor(m: string): Provider {
+  return CHAT_MODELS.find((x) => x.id === m)?.provider ?? "anthropic";
 }
 
 // Compact catalogue so the model knows valid productId / generatorId values.
