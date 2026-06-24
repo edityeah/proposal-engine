@@ -30,6 +30,7 @@
     "openai": "^6.44.0",
     "pdf-parse": "^1.1.1",
     "pdfkit": "^0.17.2",
+    "pptxgenjs": "^4.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

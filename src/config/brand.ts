@@ -87,6 +87,7 @@ export const BRANDS: Record<Brand["id"], Brand> = {
       "22+ Indian states",
       "UChicago / Prof. Kremer: ~1.9 yrs learning in 17 months",
     ],
+    logo: { full: "/brand/convegenius-full.png" },
   },
 };
 
