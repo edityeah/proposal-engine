@@ -46,10 +46,12 @@ export interface SessionUser {
   email?: string | null;
   image?: string | null;
   role?: string;
+  state?: string | null;
 }
 
 export type Screen =
   | "generate"
+  | "marketing"
   | "chat"
   | "output"
   | "history"
@@ -59,4 +61,4 @@ export type Screen =
   | "curation"
   | "costing"
   | "analytics"
-  | "soon";
+  | "team";

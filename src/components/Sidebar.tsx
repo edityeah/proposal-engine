@@ -9,11 +9,17 @@ interface NavGroup { label: string; items: NavItem[]; adminOnly?: boolean }
 const NAV: { groups: NavGroup[] } = {
   groups: [
     {
-      label: "Generate",
+      label: "Proposal Engine",
       items: [
         { id: "generate", icon: "ti-sparkles", name: "Generate doc" },
         { id: "history", icon: "ti-clock-history", name: "History" },
         { id: "analytics", icon: "ti-chart-pie", name: "Win/loss analytics" },
+      ],
+    },
+    {
+      label: "Marketing Engine",
+      items: [
+        { id: "marketing", icon: "ti-palette", name: "Marketing studio" },
       ],
     },
     {
@@ -67,7 +73,7 @@ export default function Sidebar({
       <div className="sidebar-logo">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="ConveGenius.AI" className="sidebar-logo-img" />
-        <div className="logo-text-sub sidebar-logo-tag">Pre Sales Engine</div>
+        <div className="logo-text-sub sidebar-logo-tag">Internal Engine</div>
       </div>
 
       {NAV.groups
@@ -81,8 +87,8 @@ export default function Sidebar({
                 <button
                   key={it.id}
                   className={"nav-item" + (active ? " active" : "")}
-                  onClick={() => go(it.soon ? "soon" : (it.id as Screen))}
-                  title={it.soon ? "Coming in a later phase" : it.name}
+                  onClick={() => go(it.id as Screen)}
+                  title={it.name}
                 >
                   <i className={"ti " + it.icon} />
                   <span>{it.name}</span>

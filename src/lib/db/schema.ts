@@ -21,8 +21,9 @@ export const users = pgTable("user", {
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
-  // App-specific: role within the pre-sales team.
-  role: text("role").notNull().default("member"), // 'member' | 'admin'
+  // App-specific: role + state scoping.
+  role: text("role").notNull().default("operator"), // 'admin' | 'operator'
+  state: text("state"), // null = all states (Founder's Office / admins); else scoped
 });
 
 export const accounts = pgTable(

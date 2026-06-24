@@ -7,6 +7,8 @@ import OutputView from "./OutputView";
 import HistoryView from "./HistoryView";
 import KnowledgeView from "./KnowledgeView";
 import ChatView from "./ChatView";
+import MarketingStudio from "./MarketingStudio";
+import TeamAdmin from "./TeamAdmin";
 import ProductsAdmin from "./ProductsAdmin";
 import CurationStudio from "./CurationStudio";
 import CostingView from "./CostingView";
@@ -54,7 +56,7 @@ export default function AppShell({
   const [refreshKey, setRefreshKey] = useState(0);
   const [navOpen, setNavOpen] = useState(false);
   const isAdmin = user.role === "admin";
-  const ADMIN_SCREENS: Screen[] = ["curation", "products", "costing", "soon"];
+  const ADMIN_SCREENS: Screen[] = ["curation", "products", "costing", "team"];
   // Defense in depth: non-admins can't land on an admin screen even if routed there.
   const activeScreen: Screen = !isAdmin && ADMIN_SCREENS.includes(screen) ? "generate" : screen;
 
@@ -168,6 +170,8 @@ export default function AppShell({
         )}
 
         {activeScreen === "chat" && <ChatView onOpenProposal={openProposal} />}
+        {activeScreen === "marketing" && <MarketingStudio />}
+        {activeScreen === "team" && <TeamAdmin />}
         {activeScreen === "history" && <HistoryView onOpen={openProposal} />}
         {activeScreen === "analytics" && <AnalyticsView />}
         {activeScreen === "knowledge" && <KnowledgeView mode="knowledge" />}
@@ -176,32 +180,6 @@ export default function AppShell({
         {activeScreen === "products" && <ProductsAdmin />}
         {activeScreen === "costing" && <CostingView />}
 
-        {activeScreen === "soon" && (
-          <>
-            <div className="topbar"><div className="topbar-left"><div className="topbar-title">Team access</div></div></div>
-            <div className="page-content">
-              <div className="card">
-                <div className="card-title"><i className="ti ti-users-group" /> Roles &amp; access</div>
-                <p style={{ marginTop: 10, color: "var(--text-secondary)" }}>
-                  Anyone with an <strong>@convegenius.ai</strong> Google account can sign in as a
-                  <strong> member</strong> (generate, history, knowledge base, RFP library).
-                </p>
-                <p style={{ marginTop: 8, color: "var(--text-secondary)" }}>
-                  <strong>Admins</strong> additionally manage Curation studio, Products &amp; prompts,
-                  and Costing. Current admins:
-                </p>
-                <ul style={{ margin: "8px 0 0 20px", color: "var(--text-secondary)" }}>
-                  <li>devasheesh@convegenius.ai</li>
-                  <li>aditya.c@convegenius.ai</li>
-                </ul>
-                <p style={{ marginTop: 10, fontSize: 12, color: "var(--text-muted)" }}>
-                  To change admins, update <code>ALLOWED_ADMIN_EMAILS</code> in the environment.
-                  Per-user promotion from this screen is a later enhancement.
-                </p>
-              </div>
-            </div>
-          </>
-        )}
       </div>
     </div>
   );

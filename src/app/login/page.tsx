@@ -10,7 +10,7 @@ export default async function LoginPage() {
       <div className="login-card">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="ConveGenius.AI" style={{ width: 240, maxWidth: "100%", height: "auto", margin: "0 auto 20px", display: "block" }} />
-        <div className="login-title">Pre Sales Engine</div>
+        <div className="login-title">ConveGenius Engine</div>
         <div className="login-sub">Sign in with your @convegenius.ai account</div>
         <form
           action={async () => {

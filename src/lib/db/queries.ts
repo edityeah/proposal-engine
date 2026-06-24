@@ -34,8 +34,22 @@ export async function getProposal(id: string) {
   return row ?? null;
 }
 
-// Team-wide history (this is a shared team tool). Newest first.
-export async function listProposals(limit = 100) {
+export interface Scope {
+  role: string;
+  state: string | null;
+}
+// Operators with an assigned state see only that state; admins (and unassigned
+// operators) see everything.
+function scoped(s?: Scope): boolean {
+  return !!s && s.role !== "admin" && !!s.state;
+}
+
+// History, optionally scoped to the viewer's state. Newest first.
+export async function listProposals(limit = 100, s?: Scope) {
+  if (scoped(s)) {
+    return db.select().from(proposals).where(eq(proposals.state, s!.state!))
+      .orderBy(desc(proposals.createdAt)).limit(limit);
+  }
   return db.select().from(proposals).orderBy(desc(proposals.createdAt)).limit(limit);
 }
 
@@ -84,8 +98,8 @@ export async function getVersion(proposalId: string, version: number) {
   return row ?? null;
 }
 
-export async function analytics() {
-  const rows = await db
+export async function analytics(s?: Scope) {
+  const base = db
     .select({
       status: proposals.status,
       state: proposals.state,
@@ -94,6 +108,7 @@ export async function analytics() {
       createdAt: proposals.createdAt,
     })
     .from(proposals);
+  const rows = await (scoped(s) ? base.where(eq(proposals.state, s!.state!)) : base);
 
   const total = rows.length;
   const won = rows.filter((r) => r.status === "won").length;
@@ -123,10 +138,9 @@ export async function analytics() {
   };
 }
 
-export async function historyMetrics() {
-  const rows = await db
-    .select({ status: proposals.status, state: proposals.state })
-    .from(proposals);
+export async function historyMetrics(s?: Scope) {
+  const base = db.select({ status: proposals.status, state: proposals.state }).from(proposals);
+  const rows = await (scoped(s) ? base.where(eq(proposals.state, s!.state!)) : base);
   const total = rows.length;
   const won = rows.filter((r) => r.status === "won").length;
   const inReview = rows.filter((r) => r.status === "in_review").length;
