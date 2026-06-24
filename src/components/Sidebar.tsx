@@ -2,6 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import { getModule } from "@/lib/nav";
+import SidebarRecents from "./SidebarRecents";
 import type { ModuleId, Screen, SessionUser } from "@/lib/types";
 
 function initials(user: SessionUser): string {
@@ -19,6 +20,9 @@ export default function Sidebar({
   screen,
   onNavigate,
   onHome,
+  onOpenProposal,
+  onOpenChat,
+  recentsKey,
   user,
   open,
   onClose,
@@ -27,6 +31,9 @@ export default function Sidebar({
   screen: Screen;
   onNavigate: (s: Screen) => void;
   onHome: () => void;
+  onOpenProposal: (id: string) => void;
+  onOpenChat: (threadId: string) => void;
+  recentsKey: number;
   user: SessionUser;
   open?: boolean;
   onClose?: () => void;
@@ -57,25 +64,35 @@ export default function Sidebar({
         </div>
       </div>
 
-      {mod.groups.map((g) => (
-        <div className="sidebar-section" key={g.label}>
-          <div className="sidebar-section-label">{g.label}</div>
-          {g.items.map((it) => {
-            const active = screen === it.id;
-            return (
-              <button
-                key={it.id}
-                className={"nav-item" + (active ? " active" : "")}
-                onClick={() => go(it.id)}
-                title={it.name}
-              >
-                <i className={"ti " + it.icon} />
-                <span>{it.name}</span>
-              </button>
-            );
-          })}
-        </div>
-      ))}
+      <div className="sidebar-scroll">
+        {mod.groups.map((g) => (
+          <div className="sidebar-section" key={g.label}>
+            <div className="sidebar-section-label">{g.label}</div>
+            {g.items.map((it) => {
+              const active = screen === it.id;
+              return (
+                <button
+                  key={it.id}
+                  className={"nav-item" + (active ? " active" : "")}
+                  onClick={() => go(it.id)}
+                  title={it.name}
+                >
+                  <i className={"ti " + it.icon} />
+                  <span>{it.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        ))}
+
+        <SidebarRecents
+          moduleId={moduleId}
+          refreshKey={recentsKey}
+          onOpenProposal={(id) => { onOpenProposal(id); onClose?.(); }}
+          onOpenChat={(id) => { onOpenChat(id); onClose?.(); }}
+          onClose={onClose}
+        />
+      </div>
 
       <div className="sidebar-user">
         <div className="user-avatar">

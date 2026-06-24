@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BRAND_LIST, type Brand } from "@/config/brand";
 
 const USE_CASES = [
@@ -13,26 +13,8 @@ const USE_CASES = [
   { id: "general", icon: "ti-news", name: "General Content", desc: "Case studies, blogs, press releases, outreach", phase: "Later" },
 ];
 
-interface AssetRow {
-  id: string;
-  brand: string;
-  type: string;
-  title: string;
-  blobUrl: string | null;
-  filename: string | null;
-  createdAt: string;
-}
-
-export default function MarketingStudio() {
+export default function MarketingStudio({ onAssetCreated }: { onAssetCreated?: () => void }) {
   const [view, setView] = useState<"grid" | "deck">("grid");
-  const [assets, setAssets] = useState<AssetRow[]>([]);
-
-  useEffect(() => {
-    fetch("/api/marketing/deck")
-      .then((r) => (r.ok ? r.json() : { assets: [] }))
-      .then((d) => setAssets(d.assets ?? []))
-      .catch(() => {});
-  }, [view]);
 
   return (
     <>
@@ -48,14 +30,14 @@ export default function MarketingStudio() {
       </div>
 
       <div className="page-content">
-        {view === "grid" && <Grid onOpen={(id) => id === "product_distribution" && setView("deck")} assets={assets} />}
-        {view === "deck" && <DeckForm onDone={() => setView("grid")} />}
+        {view === "grid" && <Grid onOpen={(id) => id === "product_distribution" && setView("deck")} />}
+        {view === "deck" && <DeckForm onDone={() => setView("grid")} onAssetCreated={onAssetCreated} />}
       </div>
     </>
   );
 }
 
-function Grid({ onOpen, assets }: { onOpen: (id: string) => void; assets: AssetRow[] }) {
+function Grid({ onOpen }: { onOpen: (id: string) => void }) {
   return (
     <>
       <div className="banner info" style={{ marginBottom: 18 }}>
@@ -81,33 +63,11 @@ function Grid({ onOpen, assets }: { onOpen: (id: string) => void; assets: AssetR
           </div>
         ))}
       </div>
-
-      {assets.length > 0 && (
-        <>
-          <div className="section-label" style={{ marginTop: 28, marginBottom: 10 }}>Recent assets</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {assets.map((a) => (
-              <div key={a.id} className="card" style={{ margin: 0, display: "flex", alignItems: "center", gap: 12, padding: "12px 16px" }}>
-                <i className="ti ti-file-type-ppt" style={{ fontSize: 20, color: "var(--navy-600)" }} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 600, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.title}</div>
-                  <div style={{ fontSize: 12, color: "var(--text-hint)" }}>{a.brand} · {a.type} · {new Date(a.createdAt).toLocaleDateString()}</div>
-                </div>
-                {a.blobUrl && (
-                  <a className="btn btn-ghost" href={a.blobUrl} download>
-                    <i className="ti ti-download" /> Download
-                  </a>
-                )}
-              </div>
-            ))}
-          </div>
-        </>
-      )}
     </>
   );
 }
 
-function DeckForm({ onDone }: { onDone: () => void }) {
+function DeckForm({ onDone, onAssetCreated }: { onDone: () => void; onAssetCreated?: () => void }) {
   const [brandId, setBrandId] = useState<Brand["id"]>("convegenius");
   const [topic, setTopic] = useState("");
   const [audience, setAudience] = useState("");
@@ -136,6 +96,8 @@ function DeckForm({ onDone }: { onDone: () => void }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Generation failed.");
       setResult(data);
+      onAssetCreated?.(); // refresh the sidebar Recents
+
     } catch (e) {
       setError(e instanceof Error ? e.message : "Generation failed.");
     } finally {

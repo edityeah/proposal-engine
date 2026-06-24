@@ -69,6 +69,17 @@ body {
 .sidebar-module-name { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: -0.2px; }
 .sidebar-module-tag { font-size: 10.5px; color: rgba(255,255,255,0.45); margin-top: 1px; }
 
+/* Scrollable middle region of the sidebar (nav groups + recents) */
+.sidebar-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; }
+.sidebar-scroll::-webkit-scrollbar { width: 6px; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+.sidebar-recents { padding-top: 8px; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.07); }
+.sidebar-recents-empty { font-size: 11.5px; color: rgba(255,255,255,0.3); padding: 2px 10px; }
+.recent-item { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 10px; border: none; background: none; color: rgba(255,255,255,0.55); font-size: 12.5px; font-family: inherit; text-align: left; border-radius: var(--radius-md); cursor: pointer; transition: all 0.15s; }
+.recent-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.92); }
+.recent-item i { font-size: 14px; flex-shrink: 0; opacity: 0.7; }
+.recent-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 .main-area { margin-left: 224px; display: flex; flex-direction: column; min-height: 100vh; }
 
 /* ── Landing module picker ── */

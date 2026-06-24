@@ -13,7 +13,13 @@ function md(s: string) {
   return DOMPurify.sanitize(marked.parse(s || "", { async: false }) as string, { USE_PROFILES: { html: true } });
 }
 
-export default function ChatView({ onOpenProposal }: { onOpenProposal: (id: string) => void }) {
+export default function ChatView({
+  onOpenProposal,
+  openThread,
+}: {
+  onOpenProposal: (id: string) => void;
+  openThread?: { id: string } | null;
+}) {
   const [models, setModels] = useState<Model[]>([]);
   const [model, setModel] = useState("claude-opus-4-8");
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -32,6 +38,11 @@ export default function ChatView({ onOpenProposal }: { onOpenProposal: (id: stri
     refreshThreads();
   }, []);
   useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight }); }, [messages, tool]);
+  // Open a thread requested from the sidebar Recents.
+  useEffect(() => {
+    if (openThread?.id) loadThread(openThread.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openThread]);
 
   function newChat() { setThreadId(null); setMessages([]); setTool(null); }
 

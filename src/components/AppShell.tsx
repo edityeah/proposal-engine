@@ -61,6 +61,9 @@ export default function AppShell({
   const [proposal, setProposal] = useState<CurrentProposal>(initialProposal ?? EMPTY);
   const [refreshKey, setRefreshKey] = useState(0);
   const [navOpen, setNavOpen] = useState(false);
+  // Thread the sidebar Recents asked Research chat to open ({id} so reopening
+  // the same thread still re-triggers the load).
+  const [chatThreadId, setChatThreadId] = useState<{ id: string } | null>(null);
   const isAdmin = user.role === "admin";
   const ADMIN_SCREENS: Screen[] = ["curation", "products", "costing", "team"];
   // Defense in depth: non-admins can't land on an admin screen even if routed there.
@@ -164,6 +167,9 @@ export default function AppShell({
         screen={activeScreen}
         onNavigate={setScreen}
         onHome={() => { setModuleId(null); setNavOpen(false); }}
+        onOpenProposal={openProposal}
+        onOpenChat={(id) => { setChatThreadId({ id }); setScreen("chat"); }}
+        recentsKey={refreshKey}
         user={user}
         open={navOpen}
         onClose={() => setNavOpen(false)}
@@ -189,8 +195,8 @@ export default function AppShell({
           />
         )}
 
-        {activeScreen === "chat" && <ChatView onOpenProposal={openProposal} />}
-        {activeScreen === "marketing" && <MarketingStudio />}
+        {activeScreen === "chat" && <ChatView onOpenProposal={openProposal} openThread={chatThreadId} />}
+        {activeScreen === "marketing" && <MarketingStudio onAssetCreated={() => setRefreshKey((k) => k + 1)} />}
         {activeScreen === "team" && <TeamAdmin />}
         {activeScreen === "history" && <HistoryView onOpen={openProposal} />}
         {activeScreen === "analytics" && <AnalyticsView />}
