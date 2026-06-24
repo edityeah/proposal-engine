@@ -13,7 +13,9 @@ import ProductsAdmin from "./ProductsAdmin";
 import CurationStudio from "./CurationStudio";
 import CostingView from "./CostingView";
 import AnalyticsView from "./AnalyticsView";
-import type { CurrentProposal, ProposalInputs, Screen, SessionUser } from "@/lib/types";
+import ModuleHome from "./ModuleHome";
+import { getModule, moduleForScreen } from "@/lib/nav";
+import type { CurrentProposal, ModuleId, ProposalInputs, Screen, SessionUser } from "@/lib/types";
 
 const EMPTY: CurrentProposal = {
   id: null,
@@ -52,6 +54,10 @@ export default function AppShell({
   initialProposal?: CurrentProposal;
 }) {
   const [screen, setScreen] = useState<Screen>(initialScreen ?? "generate");
+  // Which module the user is in; null = the landing module picker.
+  const [moduleId, setModuleId] = useState<ModuleId | null>(
+    initialScreen ? moduleForScreen(initialScreen) : null,
+  );
   const [proposal, setProposal] = useState<CurrentProposal>(initialProposal ?? EMPTY);
   const [refreshKey, setRefreshKey] = useState(0);
   const [navOpen, setNavOpen] = useState(false);
@@ -59,6 +65,14 @@ export default function AppShell({
   const ADMIN_SCREENS: Screen[] = ["curation", "products", "costing", "team"];
   // Defense in depth: non-admins can't land on an admin screen even if routed there.
   const activeScreen: Screen = !isAdmin && ADMIN_SCREENS.includes(screen) ? "generate" : screen;
+
+  function selectModule(m: ModuleId) {
+    const def = getModule(m);
+    if (def.adminOnly && !isAdmin) return;
+    setModuleId(m);
+    setScreen(def.defaultScreen);
+    setNavOpen(false);
+  }
 
   async function handleGenerate(inputs: ProposalInputs) {
     const title = `${inputs.generatorLabel || "Document"} — ${inputs.productName} · ${inputs.state}`;
@@ -135,6 +149,10 @@ export default function AppShell({
     });
   }
 
+  if (!moduleId) {
+    return <ModuleHome user={user} onSelect={selectModule} />;
+  }
+
   return (
     <div className="layout">
       <button className="nav-hamburger" aria-label="Open menu" onClick={() => setNavOpen(true)}>
@@ -142,8 +160,10 @@ export default function AppShell({
       </button>
       {navOpen && <div className="nav-backdrop" onClick={() => setNavOpen(false)} />}
       <Sidebar
+        moduleId={moduleId}
         screen={activeScreen}
         onNavigate={setScreen}
+        onHome={() => { setModuleId(null); setNavOpen(false); }}
         user={user}
         open={navOpen}
         onClose={() => setNavOpen(false)}

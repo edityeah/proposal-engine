@@ -62,3 +62,5 @@ export type Screen =
   | "costing"
   | "analytics"
   | "team";
+
+export type ModuleId = "proposal" | "marketing" | "admin";

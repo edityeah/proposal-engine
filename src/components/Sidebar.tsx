@@ -1,47 +1,8 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import type { Screen, SessionUser } from "@/lib/types";
-
-interface NavItem { id: Screen | string; icon: string; name: string; soon?: boolean }
-interface NavGroup { label: string; items: NavItem[]; adminOnly?: boolean }
-
-const NAV: { groups: NavGroup[] } = {
-  groups: [
-    {
-      label: "Proposal Engine",
-      items: [
-        { id: "generate", icon: "ti-sparkles", name: "Generate doc" },
-        { id: "history", icon: "ti-clock-history", name: "History" },
-        { id: "analytics", icon: "ti-chart-pie", name: "Win/loss analytics" },
-      ],
-    },
-    {
-      label: "Marketing Engine",
-      items: [
-        { id: "marketing", icon: "ti-palette", name: "Marketing studio" },
-      ],
-    },
-    {
-      label: "Intelligence",
-      items: [
-        { id: "chat", icon: "ti-message-chatbot", name: "Research chat" },
-        { id: "knowledge", icon: "ti-brain", name: "Knowledge base" },
-        { id: "rfplibrary", icon: "ti-file-search", name: "RFP library" },
-      ],
-    },
-    {
-      label: "Admin",
-      adminOnly: true,
-      items: [
-        { id: "curation", icon: "ti-books", name: "Curation studio" },
-        { id: "products", icon: "ti-adjustments-horizontal", name: "Products & prompts" },
-        { id: "costing", icon: "ti-calculator", name: "Costing templates" },
-        { id: "team", icon: "ti-users-group", name: "Team access" },
-      ],
-    },
-  ],
-};
+import { getModule } from "@/lib/nav";
+import type { ModuleId, Screen, SessionUser } from "@/lib/types";
 
 function initials(user: SessionUser): string {
   const n = user.name || user.email || "?";
@@ -54,50 +15,67 @@ function initials(user: SessionUser): string {
 }
 
 export default function Sidebar({
+  moduleId,
   screen,
   onNavigate,
+  onHome,
   user,
   open,
   onClose,
 }: {
+  moduleId: ModuleId;
   screen: Screen;
   onNavigate: (s: Screen) => void;
+  onHome: () => void;
   user: SessionUser;
   open?: boolean;
   onClose?: () => void;
 }) {
   const isAdmin = user.role === "admin";
-  const go = (s: Screen) => { onNavigate(s); onClose?.(); };
+  const mod = getModule(moduleId);
+  const go = (s: Screen) => {
+    onNavigate(s);
+    onClose?.();
+  };
+  const home = () => {
+    onHome();
+    onClose?.();
+  };
+
   return (
-    <nav className={"sidebar" + (open ? " open" : "")}>
-      <div className="sidebar-logo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="ConveGenius.AI" className="sidebar-logo-img" />
-        <div className="logo-text-sub sidebar-logo-tag">Internal Engine</div>
+    <nav className={"sidebar" + (open ? " open" : "")} style={{ ["--accent" as string]: mod.accent }}>
+      <button className="sidebar-back" onClick={home} title="All modules">
+        <i className="ti ti-arrow-left" />
+        <span>All modules</span>
+      </button>
+
+      <div className="sidebar-module">
+        <span className="sidebar-module-dot" />
+        <div>
+          <div className="sidebar-module-name">{mod.name}</div>
+          <div className="sidebar-module-tag">{mod.tagline}</div>
+        </div>
       </div>
 
-      {NAV.groups
-        .filter((g) => !g.adminOnly || isAdmin)
-        .map((g) => (
-          <div className="sidebar-section" key={g.label}>
-            <div className="sidebar-section-label">{g.label}</div>
-            {g.items.map((it) => {
-              const active = screen === it.id;
-              return (
-                <button
-                  key={it.id}
-                  className={"nav-item" + (active ? " active" : "")}
-                  onClick={() => go(it.id as Screen)}
-                  title={it.name}
-                >
-                  <i className={"ti " + it.icon} />
-                  <span>{it.name}</span>
-                  {it.soon && <span className="nav-badge">soon</span>}
-                </button>
-              );
-            })}
-          </div>
-        ))}
+      {mod.groups.map((g) => (
+        <div className="sidebar-section" key={g.label}>
+          <div className="sidebar-section-label">{g.label}</div>
+          {g.items.map((it) => {
+            const active = screen === it.id;
+            return (
+              <button
+                key={it.id}
+                className={"nav-item" + (active ? " active" : "")}
+                onClick={() => go(it.id)}
+                title={it.name}
+              >
+                <i className={"ti " + it.icon} />
+                <span>{it.name}</span>
+              </button>
+            );
+          })}
+        </div>
+      ))}
 
       <div className="sidebar-user">
         <div className="user-avatar">
