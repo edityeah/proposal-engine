@@ -57,6 +57,7 @@ export const BRANDS: Record<Brand["id"], Brand> = {
     tagline: "Changing the way Bharat learns",
     tone: "Warm, encouraging, plain-language, optimistic. Never corporate or jargon-heavy.",
     stats: ["150M+ users", "15+ Indian states", "Best AI App · Google Play 2023"],
+    logo: { full: "/brand/swiftchat-full.png", mark: "/brand/swiftchat-mark.png" },
   },
   convegenius: {
     id: "convegenius",

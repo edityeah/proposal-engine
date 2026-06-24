@@ -180,7 +180,8 @@ export async function renderDeckPptx(
   cover.background = { color: paper };
   cover.addShape("rect", { x: 0, y: 0, w: W, h: 0.28, fill: { color: primary } });
   cover.addShape("rect", { x: 0, y: 7.22, w: W, h: 0.28, fill: { color: accent } });
-  if (logo) cover.addImage({ data: logo, x: 0.6, y: 0.7, w: 2.6, h: 0.47 });
+  if (logo)
+    cover.addImage({ data: logo, x: 0.6, y: 0.6, w: 2.6, h: 0.6, sizing: { type: "contain", w: 2.6, h: 0.6 } });
   cover.addText(spec.title, {
     x: 0.6, y: 2.4, w: 12.1, h: 1.8,
     fontSize: 40, bold: true, color: ink, fontFace: head, align: "left", valign: "top",
@@ -208,7 +209,8 @@ export async function renderDeckPptx(
         lineSpacingMultiple: 1.3, valign: "top",
       },
     );
-    if (logo) slide.addImage({ data: logo, x: 10.9, y: 6.85, w: 1.8, h: 0.32 });
+    if (logo)
+      slide.addImage({ data: logo, x: 10.7, y: 6.78, w: 2.0, h: 0.42, sizing: { type: "contain", w: 2.0, h: 0.42 } });
     slide.addText(`${i + 1}`, {
       x: 0.3, y: 6.9, w: 0.5, h: 0.3, fontSize: 11, color: primary, fontFace: body, align: "center",
     });
