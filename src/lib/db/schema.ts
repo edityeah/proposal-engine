@@ -204,3 +204,32 @@ export const chatMessages = pgTable("chat_message", {
 
 export type ChatThread = typeof chatThreads.$inferSelect;
 export type ChatMessage = typeof chatMessages.$inferSelect;
+
+// ─────────────────────────────────────────────────────────────
+// Marketing Engine — generated assets (decks, carousels, images…)
+// ─────────────────────────────────────────────────────────────
+
+// A finished, brand-styled asset. `spec` stores the structured content the
+// model produced so the asset is reproducible/editable; `blobUrl` is the
+// downloadable file. `state` scopes ownership for operators.
+export const marketingAssets = pgTable("marketing_asset", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  brand: text("brand").notNull(), // 'swiftchat' | 'convegenius'
+  type: text("type").notNull(), // 'deck' | 'carousel' | 'image' | …
+  useCase: text("use_case"), // e.g. 'product_distribution' | 'social'
+  title: text("title").notNull(),
+  brief: jsonb("brief").notNull().$type<Record<string, unknown>>(),
+  spec: jsonb("spec").$type<Record<string, unknown>>(),
+  blobUrl: text("blob_url"),
+  filename: text("filename"),
+  model: text("model"),
+  state: text("state"),
+  status: text("status").notNull().default("ready"), // ready | archived
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+});
+
+export type MarketingAsset = typeof marketingAssets.$inferSelect;
+export type NewMarketingAsset = typeof marketingAssets.$inferInsert;

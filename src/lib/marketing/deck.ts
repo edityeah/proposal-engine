@@ -131,8 +131,34 @@ function logoDataUri(relPath?: string): string | null {
   }
 }
 
+// Fetches a brand's logo over HTTP (for serverless, where /public isn't on
+// disk) and returns a base64 data URI, or null on any failure.
+export async function fetchLogoDataUri(
+  brandId: Brand["id"],
+  origin: string,
+): Promise<string | null> {
+  const rel = BRANDS[brandId].logo?.full;
+  if (!rel || !origin) return null;
+  try {
+    const res = await fetch(`${origin}${rel}`);
+    if (!res.ok) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    const mime = res.headers.get("content-type") || "image/png";
+    return `data:${mime};base64,${buf.toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
+
 // Renders the DeckSpec into a real, brand-styled .pptx and returns the bytes.
-export async function renderDeckPptx(spec: DeckSpec, brandId: Brand["id"]): Promise<Buffer> {
+// `opts.logoDataUri` lets the caller supply a pre-resolved logo (the serverless
+// filesystem has no /public assets, so the API route fetches it by URL instead);
+// when omitted we fall back to a local filesystem read (dev + tests).
+export async function renderDeckPptx(
+  spec: DeckSpec,
+  brandId: Brand["id"],
+  opts?: { logoDataUri?: string | null },
+): Promise<Buffer> {
   const brand = BRANDS[brandId];
   const primary = hex(brand.colors.primary.hex);
   const ink = hex(brand.colors.ink.hex);
@@ -140,7 +166,7 @@ export async function renderDeckPptx(spec: DeckSpec, brandId: Brand["id"]): Prom
   const paper = hex(brand.colors.paper);
   const head = brand.fonts.heading;
   const body = brand.fonts.body;
-  const logo = logoDataUri(brand.logo?.full);
+  const logo = opts?.logoDataUri ?? logoDataUri(brand.logo?.full);
 
   const pptx = new pptxgen();
   pptx.layout = "LAYOUT_WIDE"; // 13.33 x 7.5in, 16:9
