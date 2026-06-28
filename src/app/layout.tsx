@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CG — Pre Sales Engine",
-  description: "ConveGenius proposal generation engine",
+  title: "ConveGenius Engine",
+  description: "ConveGenius internal platform — Proposal Engine, Marketing Engine, and research intelligence",
 };
 
 export default function RootLayout({
