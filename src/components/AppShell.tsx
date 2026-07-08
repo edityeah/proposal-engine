@@ -14,7 +14,7 @@ import CurationStudio from "./CurationStudio";
 import CostingView from "./CostingView";
 import AnalyticsView from "./AnalyticsView";
 import ModuleHome from "./ModuleHome";
-import { getModule, moduleForScreen } from "@/lib/nav";
+import { getModule, moduleForScreen, type QuickLaunch } from "@/lib/nav";
 import type { CurrentProposal, ModuleId, ProposalInputs, Screen, SessionUser } from "@/lib/types";
 
 const EMPTY: CurrentProposal = {
@@ -59,6 +59,8 @@ export default function AppShell({
     initialScreen ? moduleForScreen(initialScreen) : null,
   );
   const [proposal, setProposal] = useState<CurrentProposal>(initialProposal ?? EMPTY);
+  // Generator preselected from a landing "Quick launch" chip; null = default.
+  const [initialGenerator, setInitialGenerator] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [navOpen, setNavOpen] = useState(false);
   // Thread the sidebar Recents asked Research chat to open ({id} so reopening
@@ -72,9 +74,27 @@ export default function AppShell({
   function selectModule(m: ModuleId) {
     const def = getModule(m);
     if (def.adminOnly && !isAdmin) return;
+    setInitialGenerator(null);
     setModuleId(m);
     setScreen(def.defaultScreen);
     setNavOpen(false);
+  }
+
+  // "Jump straight to a tool" from a landing card chip.
+  function launchTool(m: ModuleId, ql: QuickLaunch) {
+    const def = getModule(m);
+    if (def.adminOnly && !isAdmin) return;
+    setInitialGenerator(ql.generatorId ?? null);
+    setModuleId(m);
+    setScreen(ql.screen);
+    setNavOpen(false);
+  }
+
+  // Sidebar navigation drops any preselected generator so the Generate form
+  // reverts to its default when reached through the nav rather than a chip.
+  function navigate(s: Screen) {
+    setInitialGenerator(null);
+    setScreen(s);
   }
 
   async function handleGenerate(inputs: ProposalInputs) {
@@ -153,7 +173,7 @@ export default function AppShell({
   }
 
   if (!moduleId) {
-    return <ModuleHome user={user} onSelect={selectModule} />;
+    return <ModuleHome user={user} onSelect={selectModule} onLaunch={launchTool} />;
   }
 
   return (
@@ -165,7 +185,7 @@ export default function AppShell({
       <Sidebar
         moduleId={moduleId}
         screen={activeScreen}
-        onNavigate={setScreen}
+        onNavigate={navigate}
         onHome={() => { setModuleId(null); setNavOpen(false); }}
         onOpenProposal={openProposal}
         onOpenChat={(id) => { setChatThreadId({ id }); setScreen("chat"); }}
@@ -180,7 +200,11 @@ export default function AppShell({
             <div className="topbar">
               <div className="topbar-left"><div className="topbar-title">Generate document</div></div>
             </div>
-            <GenerateForm onGenerate={handleGenerate} busy={proposal.streaming} />
+            <GenerateForm
+              onGenerate={handleGenerate}
+              busy={proposal.streaming}
+              initialGeneratorId={initialGenerator}
+            />
           </>
         )}
 

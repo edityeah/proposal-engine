@@ -14,6 +14,14 @@ export interface NavGroup {
   label: string;
   items: NavItem[];
 }
+// A "jump straight to a tool" shortcut shown as a chip on the landing card.
+// `screen` is the screen to open; `generatorId` (proposal only) preselects a
+// document generator inside the Generate form.
+export interface QuickLaunch {
+  label: string;
+  screen: Screen;
+  generatorId?: string;
+}
 export interface ModuleDef {
   id: ModuleId;
   name: string;
@@ -23,6 +31,7 @@ export interface ModuleDef {
   accent: string; // CSS colour for the card/sidebar accent
   defaultScreen: Screen;
   adminOnly?: boolean;
+  quickLaunch: QuickLaunch[]; // landing-card shortcuts ("jump straight to a tool")
   groups: NavGroup[];
 }
 
@@ -32,15 +41,23 @@ export const MODULES: ModuleDef[] = [
     name: "Proposal Engine",
     icon: "ti-file-text",
     tagline: "Win more government school deals",
-    blurb: "Draft proposals, PAB notes and RFP responses, track win/loss, and research opportunities.",
+    blurb: "Draft proposals, PAB notes and RFP responses, model CM2 margins, and research live opportunities.",
     accent: "#386AF6",
     defaultScreen: "generate",
+    quickLaunch: [
+      { label: "Generate proposal", screen: "generate", generatorId: "proposal" },
+      { label: "PAB proposal note", screen: "generate", generatorId: "pab_note" },
+      { label: "RFP response", screen: "generate", generatorId: "rfp_response" },
+      { label: "CM2 margin analysis", screen: "generate", generatorId: "cm2_analysis" },
+      { label: "Executive summary", screen: "generate", generatorId: "executive_summary" },
+      { label: "Concept note", screen: "generate", generatorId: "concept_note" },
+    ],
     groups: [
       {
         label: "Create",
         items: [
           { id: "generate", icon: "ti-sparkles", name: "Generate doc" },
-          { id: "history", icon: "ti-clock-history", name: "History" },
+          { id: "history", icon: "ti-history", name: "History" },
           { id: "analytics", icon: "ti-chart-pie", name: "Win/loss analytics" },
         ],
       },
@@ -60,8 +77,9 @@ export const MODULES: ModuleDef[] = [
     icon: "ti-palette",
     tagline: "On-brand collateral, in-house",
     blurb: "Generate finished, brand-styled decks, images, carousels and campaigns from CG's brand grammar.",
-    accent: "#00BA34",
+    accent: "#2E8B82",
     defaultScreen: "marketing",
+    quickLaunch: [{ label: "Brand collateral studio", screen: "marketing" }],
     groups: [
       {
         label: "Studio",
@@ -74,10 +92,16 @@ export const MODULES: ModuleDef[] = [
     name: "Admin",
     icon: "ti-settings",
     tagline: "Configure the engine",
-    blurb: "Curate guidance, edit product prompts, manage costing templates and team access.",
-    accent: "#7A7AB8",
+    blurb: "Curate reference guidance, edit product prompts, manage costing templates and team access.",
+    accent: "#4F46C4",
     defaultScreen: "curation",
     adminOnly: true,
+    quickLaunch: [
+      { label: "Guidance library", screen: "curation" },
+      { label: "Product prompts", screen: "products" },
+      { label: "Costing templates", screen: "costing" },
+      { label: "Team & access", screen: "team" },
+    ],
     groups: [
       {
         label: "Knowledge & content",

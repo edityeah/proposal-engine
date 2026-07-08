@@ -22,11 +22,17 @@ function surroundId(s: string) {
 export default function GenerateForm({
   onGenerate,
   busy,
+  initialGeneratorId,
 }: {
   onGenerate: (inputs: ProposalInputs) => void;
   busy: boolean;
+  initialGeneratorId?: string | null;
 }) {
-  const [generatorId, setGeneratorId] = useState<string>(GENERATORS[0].id);
+  const [generatorId, setGeneratorId] = useState<string>(
+    initialGeneratorId && GENERATORS.some((g) => g.id === initialGeneratorId)
+      ? initialGeneratorId
+      : GENERATORS[0].id,
+  );
   const [proposalType, setProposalType] = useState<"vsk" | "vai" | "module">("vsk");
 
   const [vskVersion, setVskVersion] = useState<string>(VSK_PRODUCTS[0]?.id ?? "vsk1");
