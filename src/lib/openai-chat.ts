@@ -8,6 +8,21 @@ function openaiClient(): OpenAI {
   return _openai;
 }
 
+// Short chat title via OpenAI — used when the chat model is OpenAI (so titles
+// don't fall back to the raw first message). Cheap fixed model, not the chat model
+// (avoids reasoning models burning the tiny token budget on hidden reasoning).
+export async function titleFromOpenAI(system: string, prompt: string): Promise<string> {
+  const res = await openaiClient().chat.completions.create({
+    model: "gpt-4o",
+    max_completion_tokens: 30,
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: prompt },
+    ],
+  });
+  return res.choices[0]?.message?.content || "";
+}
+
 const MAX_TURNS = 6;
 
 interface RunArgs {
@@ -19,6 +34,7 @@ interface RunArgs {
   onText: (delta: string) => void;
   onToolStatus: (name: "web_search" | "generate_document") => void;
   onDoc: (proposalId: string, title: string) => void;
+  onSource?: (url: string, title: string) => void; // web-search citations
 }
 
 // Agentic OpenAI chat via the Responses API: built-in web search + a
@@ -54,7 +70,7 @@ export async function runOpenAIChat(a: RunArgs): Promise<string> {
     });
 
     let sawWebSearch = false;
-    for await (const ev of stream as AsyncIterable<{ type?: string; delta?: string; item?: { type?: string } }>) {
+    for await (const ev of stream as AsyncIterable<{ type?: string; delta?: string; item?: { type?: string }; annotation?: { type?: string; url?: string; title?: string } }>) {
       const t = ev.type || "";
       if (t === "response.output_text.delta" && ev.delta) {
         visible += ev.delta;
@@ -62,6 +78,8 @@ export async function runOpenAIChat(a: RunArgs): Promise<string> {
       } else if (t.includes("web_search") && !sawWebSearch) {
         sawWebSearch = true;
         a.onToolStatus("web_search");
+      } else if (t === "response.output_text.annotation.added" && ev.annotation?.url) {
+        a.onSource?.(ev.annotation.url, ev.annotation.title || ev.annotation.url);
       } else if (t === "response.output_item.added" && ev.item?.type === "function_call") {
         a.onToolStatus("generate_document");
       }
@@ -69,6 +87,16 @@ export async function runOpenAIChat(a: RunArgs): Promise<string> {
 
     const final = await stream.finalResponse();
     previousId = final.id;
+
+    // Fallback: sweep the final output for any url_citation annotations the
+    // streaming events didn't surface (dedup happens client-side by URL).
+    for (const item of (final.output as { type?: string; content?: { annotations?: { type?: string; url?: string; title?: string }[] }[] }[]) || []) {
+      for (const block of item.content || []) {
+        for (const ann of block.annotations || []) {
+          if (ann.type === "url_citation" && ann.url) a.onSource?.(ann.url, ann.title || ann.url);
+        }
+      }
+    }
 
     const calls = (final.output as { type: string; name?: string; call_id?: string; arguments?: string }[])
       .filter((o) => o.type === "function_call");
