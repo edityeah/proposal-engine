@@ -44,7 +44,7 @@ export async function retrieveContext(opts: {
   keywords?: string[];
   limit?: number;
 }) {
-  const { state, kinds = ["winning_proposal", "rfp", "sop"], keywords = [], limit = 4 } = opts;
+  const { state, kinds = ["winning_proposal", "rfp", "sop", "inception"], keywords = [], limit = 4 } = opts;
 
   const kindFilter = or(...kinds.map((k) => eq(knowledgeDocuments.kind, k)));
   const kwFilters = keywords

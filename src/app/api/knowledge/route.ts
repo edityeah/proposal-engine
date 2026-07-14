@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 const MAX_BYTES = 25 * 1024 * 1024;
-const KINDS = new Set(["winning_proposal", "rfp", "sop", "exhibit", "toc"]);
+const KINDS = new Set(["winning_proposal", "losing_proposal", "rfp", "sop", "exhibit", "toc"]);
 
 export async function GET(req: Request) {
   const session = await auth();

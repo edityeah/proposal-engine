@@ -11,6 +11,7 @@ const KIND_LABEL: Record<string, string> = {
   sop: "Internal SOP",
   exhibit: "Exhibit",
   toc: "Theory of change",
+  inception: "Inception-report pattern",
 };
 
 // Formats retrieved knowledge as a grounding block. Treated as reference
