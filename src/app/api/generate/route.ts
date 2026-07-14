@@ -28,6 +28,8 @@ export async function POST(req: Request) {
   const err = validateInputs(inputs);
   if (err) return Response.json({ error: err }, { status: 400 });
 
+  const generate = streamProposal;
+
   // Phase 2: apply admin prompt overrides (server-side, authoritative).
   const productOverride = inputs.productId ? await getOverride("product", inputs.productId) : null;
   const generatorOverride = (inputs as { generatorId?: string }).generatorId
@@ -123,7 +125,7 @@ export async function POST(req: Request) {
         saving = false;
       };
       try {
-        await streamProposal({
+        await generate({ // DEMO-ONLY: `generate` is streamProposal unless demo mode swapped it to OpenAI
           system: systemPrompt,
           user: userPrompt,
           onText: (delta) => {
