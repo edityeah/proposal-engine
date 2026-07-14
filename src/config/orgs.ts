@@ -6,9 +6,6 @@ export interface Org {
 
 export const ORGS: Org[] = [
   { id: "direct", name: "CG direct", icon: "ti-building" },
-  { id: "tcil", name: "TCIL", icon: "ti-building-factory-2" },
-  { id: "railtel", name: "RailTel", icon: "ti-radio-tower" },
-  { id: "nic", name: "NIC", icon: "ti-server" },
   { id: "other", name: "Other PSU", icon: "ti-building-bank" },
 ];
 
@@ -42,4 +39,4 @@ export const DURATIONS = [
   "2025–27 (2 years)",
 ];
 
-export const IMPLEMENTING_PARTNERS = ["RailTel", "TCIL", "NIC", "Other CPSU"];
+export const IMPLEMENTING_PARTNERS = ["Other CPSU"];

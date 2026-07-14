@@ -92,7 +92,7 @@ export default function SidebarRecents({
         items.map((it) => (
           <button key={it.type + it.id} className="recent-item" onClick={() => open(it)} title={it.title}>
             <i className={"ti " + ICON[it.type]} />
-            <span>{it.title}</span>
+            <span className="recent-item-label"><span className="recent-item-text">{it.title}</span></span>
           </button>
         ))
       )}

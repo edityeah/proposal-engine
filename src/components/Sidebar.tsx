@@ -3,6 +3,7 @@
 import { signOut } from "next-auth/react";
 import { getModule } from "@/lib/nav";
 import SidebarRecents from "./SidebarRecents";
+import ThemeToggle from "./ThemeToggle";
 import type { ModuleId, Screen, SessionUser } from "@/lib/types";
 
 function initials(user: SessionUser): string {
@@ -26,6 +27,10 @@ export default function Sidebar({
   user,
   open,
   onClose,
+  collapsed,
+  onToggleCollapse,
+  onOpenProfile,
+  onOpenAbout,
 }: {
   moduleId: ModuleId;
   screen: Screen;
@@ -37,6 +42,10 @@ export default function Sidebar({
   user: SessionUser;
   open?: boolean;
   onClose?: () => void;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+  onOpenProfile?: () => void;
+  onOpenAbout?: () => void;
 }) {
   const isAdmin = user.role === "admin";
   const mod = getModule(moduleId);
@@ -50,17 +59,25 @@ export default function Sidebar({
   };
 
   return (
-    <nav className={"sidebar" + (open ? " open" : "")} style={{ ["--accent" as string]: mod.accent }}>
-      <button className="sidebar-back" onClick={home} title="All modules">
-        <i className="ti ti-arrow-left" />
-        <span>All modules</span>
-      </button>
-
-      <div className="sidebar-module">
-        <span className="sidebar-module-dot" />
-        <div>
-          <div className="sidebar-module-name">{mod.name}</div>
-          <div className="sidebar-module-tag">{mod.tagline}</div>
+    <nav className={"sidebar" + (open ? " open" : "")}>
+      <div className="sidebar-toolbar">
+        <button className="sidebar-back" onClick={home} title="All modules">
+          <i className="ti ti-arrow-left" /> <span>All modules</span>
+        </button>
+        <button
+          className="sidebar-collapse-btn"
+          onClick={onToggleCollapse}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <i className={"ti " + (collapsed ? "ti-layout-sidebar-left-expand" : "ti-layout-sidebar-left-collapse")} />
+        </button>
+      </div>
+      <div className="sidebar-head">
+        <span className="sidebar-head-icon">{mod.name.charAt(0)}</span>
+        <div className="sidebar-head-body">
+          <div className="sidebar-head-name">{mod.name}</div>
+          <div className="sidebar-head-tag">{mod.tagline}</div>
         </div>
       </div>
 
@@ -94,17 +111,28 @@ export default function Sidebar({
         />
       </div>
 
+      <ThemeToggle />
+
+      <button
+        className="btn btn-outline sidebar-changelog sidebar-about"
+        onClick={onOpenAbout}
+        title="Documentation & Versions"
+      >
+        <i className="ti ti-book" /> <span>Documentation &amp; Versions</span>
+      </button>
+
       <div className="sidebar-user">
-        <div className="user-avatar">
-          {user.image ? <img src={user.image} alt="" /> : initials(user)}
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="user-name">{user.name || user.email}</div>
-          <div className="user-role">{isAdmin ? "Admin · Pre Sales" : "Pre Sales"}</div>
-        </div>
+        <button className="sidebar-user-main" onClick={onOpenProfile} title="Profile & settings">
+          <div className="user-avatar">
+            {user.image ? <img src={user.image} alt="" /> : initials(user)}
+          </div>
+          <div className="sidebar-user-body">
+            <div className="user-name">{user.name || user.email}</div>
+            <div className="user-role">{isAdmin ? "Admin · Pre Sales" : "Pre Sales"}</div>
+          </div>
+        </button>
         <button
-          className="nav-item"
-          style={{ width: "auto", padding: 6 }}
+          className="sidebar-signout"
           title="Sign out"
           onClick={() => signOut({ callbackUrl: "/login" })}
         >
