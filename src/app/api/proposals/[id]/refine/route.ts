@@ -21,8 +21,14 @@ export async function POST(
   const body = (await req.json().catch(() => ({}))) as {
     instruction?: string;
     selection?: string;
+    model?: string;
+    attachment?: { filename?: string; text?: string };
   };
   const instruction = (body.instruction || "").trim();
+  // Refine runs on Anthropic (streamProposal). Only honour Claude models; ignore
+  // any non-Anthropic pick and fall back to the default.
+  const refineModel = typeof body.model === "string" && body.model.startsWith("claude") ? body.model : undefined;
+  const attachText = typeof body.attachment?.text === "string" ? body.attachment.text.slice(0, 100_000) : "";
   if (!instruction) {
     return Response.json({ error: "Provide a refinement instruction." }, { status: 400 });
   }
@@ -41,6 +47,9 @@ export async function POST(
     proposal.output,
     "═══ END DRAFT ═══",
     "",
+    attachText
+      ? `The user attached a reference document${body.attachment?.filename ? ` ("${body.attachment.filename}")` : ""} — use it to inform the revision:\n\n${attachText}\n`
+      : "",
     body.selection
       ? "The user has highlighted this section to revise:\n\n" +
         body.selection +
@@ -64,6 +73,7 @@ export async function POST(
         full = await streamProposal({
           system,
           user: userPrompt,
+          model: refineModel,
           onText: (delta) => controller.enqueue(encoder.encode(delta)),
         });
         await addVersion(id, full, label);

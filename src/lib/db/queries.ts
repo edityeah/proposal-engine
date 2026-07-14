@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "./index";
 import {
@@ -53,6 +54,15 @@ export async function listProposals(limit = 100, s?: Scope) {
   return db.select().from(proposals).orderBy(desc(proposals.createdAt)).limit(limit);
 }
 
+// Latest version number per proposal (max of proposal_version.version), for the
+// "v{n}" badge on the Recents cards.
+export async function latestVersions() {
+  return db
+    .select({ id: proposalVersions.proposalId, version: sql<number>`max(${proposalVersions.version})` })
+    .from(proposalVersions)
+    .groupBy(proposalVersions.proposalId);
+}
+
 export async function getVersions(proposalId: string) {
   return db
     .select()
@@ -88,6 +98,87 @@ export async function setStatus(id: string, status: string) {
     .update(proposals)
     .set({ status, updatedAt: new Date() })
     .where(eq(proposals.id, id));
+}
+
+// Set the outcome status together with a mandatory reason. The reason is stored
+// in the existing `inputs` jsonb (no schema change) so it travels with the row.
+export async function setOutcome(id: string, status: string, reason: string) {
+  const [row] = await db
+    .select({ inputs: proposals.inputs })
+    .from(proposals)
+    .where(eq(proposals.id, id));
+  const inputs = { ...(row?.inputs ?? {}), outcomeReason: reason };
+  await db
+    .update(proposals)
+    .set({ status, inputs, updatedAt: new Date() })
+    .where(eq(proposals.id, id));
+}
+
+// ── Document comments (Google-Docs style) ──
+// Stored in the existing `inputs` jsonb (no schema change), same pattern as
+// setOutcome. Visible to anyone who can open the proposal.
+export interface ProposalComment {
+  id: string;
+  authorId: string;
+  authorName: string;
+  forId: string | null;    // teammate the comment is addressed to
+  forName: string | null;
+  quote: string;           // the selected text the comment anchors to
+  body: string;
+  resolved: boolean;
+  createdAt: string;       // ISO
+}
+
+export async function listProposalComments(id: string): Promise<ProposalComment[]> {
+  const [row] = await db.select({ inputs: proposals.inputs }).from(proposals).where(eq(proposals.id, id));
+  if (!row) return [];
+  const arr = (row.inputs as { comments?: ProposalComment[] } | null)?.comments;
+  return Array.isArray(arr) ? arr : [];
+}
+
+async function writeComments(id: string, comments: ProposalComment[]): Promise<boolean> {
+  const [row] = await db.select({ inputs: proposals.inputs }).from(proposals).where(eq(proposals.id, id));
+  if (!row) return false;
+  const inputs = { ...((row.inputs as Record<string, unknown>) ?? {}), comments };
+  await db.update(proposals).set({ inputs, updatedAt: new Date() }).where(eq(proposals.id, id));
+  return true;
+}
+
+export async function addProposalComment(
+  id: string,
+  c: { authorId: string; authorName: string; forId: string | null; forName: string | null; quote: string; body: string },
+): Promise<ProposalComment | null> {
+  const comments = await listProposalComments(id);
+  const comment: ProposalComment = { ...c, id: randomUUID(), resolved: false, createdAt: new Date().toISOString() };
+  const ok = await writeComments(id, [...comments, comment]);
+  return ok ? comment : null;
+}
+
+export async function updateProposalComment(
+  id: string,
+  cid: string,
+  patch: Partial<Pick<ProposalComment, "resolved" | "body">>,
+): Promise<boolean> {
+  const comments = await listProposalComments(id);
+  let found = false;
+  const next = comments.map((c) => (c.id === cid ? ((found = true), { ...c, ...patch }) : c));
+  return found ? writeComments(id, next) : false;
+}
+
+export async function deleteProposalComment(id: string, cid: string): Promise<boolean> {
+  const comments = await listProposalComments(id);
+  const next = comments.filter((c) => c.id !== cid);
+  return next.length === comments.length ? false : writeComments(id, next);
+}
+
+// Star / unstar a document. Stored in the `inputs` jsonb (no schema change).
+// A star is a filter, not a folder — the doc still appears in All.
+export async function setProposalStar(id: string, starred: boolean): Promise<boolean> {
+  const [row] = await db.select({ inputs: proposals.inputs }).from(proposals).where(eq(proposals.id, id));
+  if (!row) return false;
+  const inputs = { ...((row.inputs as Record<string, unknown>) ?? {}), starred };
+  await db.update(proposals).set({ inputs }).where(eq(proposals.id, id));
+  return true;
 }
 
 export async function getVersion(proposalId: string, version: number) {
@@ -130,11 +221,40 @@ export async function analytics(s?: Scope) {
       .sort((a, b) => b.total - a.total);
   };
 
+  // Last 6 months (oldest → newest) for the trend charts, keyed off createdAt.
+  const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const now = new Date();
+  const monthly = Array.from({ length: 6 }, (_, k) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - k), 1);
+    return {
+      key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
+      label: MON[d.getMonth()],
+      total: 0, won: 0, lost: 0, inReview: 0, winRate: 0,
+    };
+  });
+  const mIdx = new Map(monthly.map((m, i) => [m.key, i]));
+  for (const r of rows) {
+    if (!r.createdAt) continue;
+    const d = new Date(r.createdAt);
+    const i = mIdx.get(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+    if (i === undefined) continue;
+    const m = monthly[i];
+    m.total += 1;
+    if (r.status === "won") m.won += 1;
+    else if (r.status === "lost") m.lost += 1;
+    else if (r.status === "in_review") m.inReview += 1;
+  }
+  for (const m of monthly) {
+    const dec = m.won + m.lost;
+    m.winRate = dec ? Math.round((m.won / dec) * 100) : 0;
+  }
+
   return {
     totals: { total, won, lost, winRate, inReview: rows.filter((r) => r.status === "in_review").length },
     byState: tally("state"),
     byProduct: tally("productName"),
     byGenerator: tally("generatorLabel"),
+    monthly,
   };
 }
 

@@ -8,6 +8,7 @@ export const GENERATORS: any[] = [
   {
     id: "proposal",
     label: "Generate proposal",
+    sections: ["Executive summary", "Background & context", "Understanding of the brief", "Proposed solution & architecture", "Implementation & phased rollout", "Team & capability", "Past experience & references", "Financial proposal", "Risk mitigation", "Conclusion & way forward"],
     icon: "ti-file-text",
     outputTitle: "Proposal draft",
     promptPrefix: `Generate a full government proposal document with the following sections:
@@ -31,46 +32,54 @@ If submitting via a PSU (TCIL/RailTel/NIC), frame CG as the technology partner a
   {
     id: "pab_note",
     label: "PAB proposal note",
+    sections: ["State & programme overview", "Current status & gap analysis", "Proposed intervention & rationale", "Physical targets", "Financial proposal (component-wise)", "Implementation plan & timeline", "Expected outcomes & monitoring"],
     icon: "ti-building-bank",
     outputTitle: "PAB proposal note",
-    promptPrefix: `Draft a PAB (Project Approval Board) proposal note for Samagra Shiksha funding approval. Follow standard PAB note format precisely:
+    promptPrefix: `Draft a PAB (Project Approval Board) proposal note for Samagra Shiksha funding approval. A PAB note is a FUNDING-APPROVAL document — the Board releases money against budget heads — so the costing and the cited evidence carry it, not the prose. Follow standard PAB note format precisely:
 
 1. State & Programme Overview
    - State name, current education status, key challenges
-   - Alignment to Samagra Shiksha Annual Work Plan
+   - Alignment to the state's Samagra Shiksha Annual Work Plan & Budget (AWP&B)
 
-2. Current Status / Gap Analysis
-   - What exists today, what is missing, evidence from NAS/PARAKH/UDISE+ data
+2. Current Status / Gap Analysis  — QUANTIFIED, CITED
+   - What exists today vs. what is missing, sized with numbers.
+   - Every learning/access statistic MUST carry its source + year (e.g. "NAS 2021", "PARAKH 2024", "UDISE+ 2023–24"). If a figure isn't supplied, write a marked [INSERT: … , source + year] placeholder — NEVER invent or round a number.
 
 3. Proposed Intervention & Rationale
-   - What is being proposed, why this intervention, theory of change
-   - Alignment to NIPUN Bharat / NEP 2020 / PM SHRI goals
+   - What is being proposed, why this intervention, and its theory of change linking activity → output → outcome.
+   - Alignment to NIPUN Bharat / NEP 2020 / PM SHRI goals.
 
 4. Physical Targets
-   - Schools, students, teachers, grades covered
-   - Year-wise targets
+   - Districts/blocks, schools, students, teachers, grades covered — year-wise.
+   - Use the exact figures from the brief; where one is missing use an [INSERT: …] placeholder.
 
-5. Financial Proposal (Component-wise)
-   - PAB head and sub-component
-   - Unit costs and total cost
-   - Year-wise phasing
+5. Financial Proposal (Component-wise) — THE SPINE OF THE NOTE
+   - Present a costing TABLE. Every line MUST resolve as: component → physical units → unit cost → total → amount (₹ in lakhs) → tagged Recurring (R) or Non-Recurring (NR) → mapped to a specific PAB budget head.
+   - PAB heads to map against: Quality Intervention, Teacher Education, Assessment Reform, FLN / Assessment, PM SHRI, Holistic Progress Card (HPC).
+   - Show year-wise phasing and a grand total.
+   - Rates are negotiable and state-specific: NEVER fabricate a unit cost. Where a rate isn't given, write [INSERT: unit cost for <component>] and still show the structure. A cost with no PAB head is incomplete — flag it, never guess the head.
 
 6. Implementation Plan & Timeline
-   - Key milestones, responsibilities, roles
+   - Key milestones, responsibilities, roles, year-wise.
 
 7. Expected Outcomes & Measurable Indicators
-   - KPIs linked to PAB monitoring framework
-   - How outcomes will be measured
+   - KPIs tied to the PAB monitoring framework, each linked back to the spend it justifies (budget ↔ outcome).
+   - State how each outcome will be measured and the baseline it moves from.
 
 8. Convergence with Other Schemes
-   - NIPUN Bharat, PM POSHAN, STARS, other state schemes
+   - Show how this CONVERGES with (does not duplicate) existing funded lines: NIPUN Bharat, PM POSHAN, STARS, PM SHRI, and relevant state schemes.
 
-Use language from actual PAB submission formats. Reference PAB heads: Quality Intervention, Teacher Education, Assessment Reform, FLN-Assessment, HPC. All costs in Indian Rupees. Be specific with the numbers provided.`
+STRICT RULES:
+- Formal government-note register; measured, institutional, third-person.
+- Lead with magnitude; every claim carries a number where one exists.
+- Never fabricate a figure, rate, citation, or PAB head — emit a marked [INSERT: …] placeholder instead.
+- All costs in Indian Rupees, ₹ in lakhs, every rupee mapped to a PAB head and tagged R/NR.`
   },
 
   {
     id: "rfp_response",
     label: "RFP response",
+    sections: ["Executive summary", "Compliance matrix", "Understanding of the requirement", "Proposed solution", "Implementation timeline", "Commercials", "Team & governance", "Case studies"],
     icon: "ti-clipboard-list",
     outputTitle: "RFP response draft",
     promptPrefix: `Draft a comprehensive technical proposal in response to the uploaded RFP. Structure the response to directly address every section, evaluation criterion, and scope item mentioned in the RFP.
@@ -97,6 +106,7 @@ Write in formal government procurement language. Reference QCBS methodology, GFR
   {
     id: "cm2_analysis",
     label: "CM2 margin analysis",
+    sections: ["Cost summary", "Component-wise breakdown", "Margin analysis (post-CM2)", "Assumptions & rates", "Sensitivity & risks", "Recommendation"],
     icon: "ti-calculator",
     outputTitle: "CM2 margin analysis",
     promptPrefix: `Generate a CM2 margin analysis memo for this engagement. This is an internal finance document — be analytically precise.
@@ -140,6 +150,7 @@ Flag clearly where assumptions have been made due to missing data. Use ₹ for a
   {
     id: "executive_summary",
     label: "Executive summary",
+    sections: ["The opportunity", "Proposed approach", "Impact & outcomes", "Commercial snapshot", "Why ConveGenius"],
     icon: "ti-file-description",
     outputTitle: "Executive summary",
     promptPrefix: `Write a concise executive summary for a senior government official — Principal Secretary, Secretary, or Mission Director level. Maximum 2 pages when printed. This person has 3 minutes to read it.
@@ -163,6 +174,7 @@ Rules:
   {
     id: "concept_note",
     label: "Concept note",
+    sections: ["Context & rationale", "Objectives", "Proposed intervention", "Scope & coverage", "Implementation approach", "Indicative budget", "Expected outcomes"],
     icon: "ti-bulb",
     outputTitle: "Concept note",
     promptPrefix: `Write a concept note — a shorter, earlier-stage document used to initiate a conversation with a state before a formal proposal is ready. This is typically 3-4 pages.

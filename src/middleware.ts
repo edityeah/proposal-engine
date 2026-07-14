@@ -10,6 +10,9 @@ const SESSION_COOKIES = [
 ];
 
 export function middleware(req: NextRequest) {
+  // Local dev escape hatch: DEV_NO_AUTH disables the session gate entirely.
+  if (process.env.DEV_NO_AUTH === "1") return NextResponse.next();
+
   const { pathname } = req.nextUrl;
   const isPublic = pathname.startsWith("/login") || pathname.startsWith("/api/auth");
   if (isPublic) return NextResponse.next();
