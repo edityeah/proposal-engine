@@ -43,7 +43,7 @@ export const MODULES: ModuleDef[] = [
     tagline: "Win more government school deals",
     blurb: "Draft proposals, PAB notes and RFP responses, model CM2 margins, and research live opportunities.",
     accent: "#386AF6",
-    defaultScreen: "generate",
+    defaultScreen: "research",
     quickLaunch: [
       { label: "Generate proposal", screen: "generate", generatorId: "proposal" },
       { label: "PAB proposal note", screen: "generate", generatorId: "pab_note" },
@@ -56,15 +56,15 @@ export const MODULES: ModuleDef[] = [
       {
         label: "Create",
         items: [
+          { id: "research", icon: "ti-search", name: "Research" },
           { id: "generate", icon: "ti-sparkles", name: "Generate doc" },
-          { id: "history", icon: "ti-history", name: "History" },
+          { id: "history", icon: "ti-files", name: "My docs" },
           { id: "analytics", icon: "ti-chart-pie", name: "Win/loss analytics" },
         ],
       },
       {
         label: "Intelligence",
         items: [
-          { id: "chat", icon: "ti-message-chatbot", name: "Research chat" },
           { id: "knowledge", icon: "ti-brain", name: "Knowledge base" },
           { id: "rfplibrary", icon: "ti-file-search", name: "RFP library" },
         ],

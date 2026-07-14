@@ -3,6 +3,8 @@
 import { signOut } from "next-auth/react";
 import { MODULES, type ModuleDef, type QuickLaunch } from "@/lib/nav";
 import type { ModuleId, SessionUser } from "@/lib/types";
+import CurvedLoop from "./CurvedLoop";
+import ThemeToggle from "./ThemeToggle";
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -11,10 +13,19 @@ function greeting(): string {
   return "Good evening";
 }
 
+// Repeat items so a marquee row is long enough to fill + loop; `rotate` offsets
+// the second row so the two rows aren't identical.
+function marqueeRow(items: QuickLaunch[], rotate = 0): QuickLaunch[] {
+  if (items.length === 0) return [];
+  const base = rotate ? [...items.slice(rotate), ...items.slice(0, rotate)] : items;
+  const out: QuickLaunch[] = [];
+  while (out.length < 6) out.push(...base);
+  return out;
+}
+
 export default function ModuleHome({
   user,
   onSelect,
-  onLaunch,
 }: {
   user: SessionUser;
   onSelect: (m: ModuleId) => void;
@@ -27,13 +38,18 @@ export default function ModuleHome({
 
   const engineCount = modules.length;
   const toolCount = modules.reduce((n, m) => n + m.quickLaunch.length, 0);
+  // Feature phrases for the curved backdrop behind the cards.
+  const featureText = modules.flatMap((m) => m.quickLaunch.map((q) => q.label)).join("  ✦  ");
 
   return (
     <div className="module-home">
+      {/* animated curved feature text behind the welcome cards */}
+      <CurvedLoop text={featureText} className="mh-curved-bg" fontSize={62} curve={80} speed={0.5} />
       <header className="mh-topbar">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="ConveGenius.AI" className="mh-logo" />
         <div className="mh-topbar-right">
+          <ThemeToggle className="theme-toggle-inline" />
           <div className="mh-userpill" title={user.email ?? undefined}>
             <span className="mh-userpill-name">{first || "Account"}</span>
             <span className="mh-userpill-avatar">
@@ -73,8 +89,19 @@ export default function ModuleHome({
         <div className="mh-grid">
           {modules.map((m) => {
             const count = m.quickLaunch.length;
+            const rowA = marqueeRow(m.quickLaunch);
+            const rowB = marqueeRow(m.quickLaunch, 1);
             return (
-              <div key={m.id} className="mh-card" style={{ ["--accent" as string]: m.accent }}>
+              <div
+                key={m.id}
+                className="mh-card"
+                style={{ ["--accent" as string]: m.accent }}
+                onMouseMove={(e) => {
+                  const r = e.currentTarget.getBoundingClientRect();
+                  e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+                  e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+                }}
+              >
                 <div className="mh-card-head">
                   <div className="mh-card-icon">
                     <i className={"ti " + m.icon} />
@@ -93,18 +120,22 @@ export default function ModuleHome({
                 <p className="mh-card-blurb">{m.blurb}</p>
 
                 <div className="mh-card-ql">
-                  <div className="mh-ql-label">Quick launch</div>
-                  <div className="mh-ql-chips">
-                    {m.quickLaunch.map((ql) => (
-                      <button
-                        key={ql.label}
-                        className="mh-chip"
-                        onClick={() => onLaunch(m.id, ql)}
-                      >
-                        <span className="mh-chip-dot" />
-                        {ql.label}
-                      </button>
-                    ))}
+                  <div className="mh-ql-label">Features</div>
+                  <div className="mh-marquee">
+                    <div className="mh-mq-row">
+                      <div className="mh-mq-track">
+                        {[...rowA, ...rowA].map((ql, i) => (
+                          <span key={"a" + i} className="mh-chip">{ql.label}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mh-mq-row">
+                      <div className="mh-mq-track rev">
+                        {[...rowB, ...rowB].map((ql, i) => (
+                          <span key={"b" + i} className="mh-chip">{ql.label}</span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -117,7 +148,7 @@ export default function ModuleHome({
         </div>
 
         <footer className="mh-footer">
-          Made with <span className="mh-heart">💜</span> by the ConveGenius team
+          Made with <span className="mh-heart">🩵</span> by the ConveGenius team
         </footer>
       </div>
     </div>

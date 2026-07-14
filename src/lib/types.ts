@@ -30,6 +30,8 @@ export interface ProposalInputs {
   rfpText: string;
   rfpFilename?: string;
   rfpBlobUrl?: string;
+  sections?: string[];
+  additionalInstructions?: string;
 }
 
 export interface CurrentProposal {
@@ -39,6 +41,8 @@ export interface CurrentProposal {
   status: string;
   streaming: boolean;
   rfpLoaded: boolean;
+  outcomeReason?: string; // mandatory reason captured when an outcome is set
+  starred?: boolean;      // starred by the user (same star as in My Docs)
 }
 
 export interface SessionUser {
@@ -50,6 +54,7 @@ export interface SessionUser {
 }
 
 export type Screen =
+  | "research"
   | "generate"
   | "marketing"
   | "chat"
@@ -61,6 +66,7 @@ export type Screen =
   | "curation"
   | "costing"
   | "analytics"
-  | "team";
+  | "team"
+  | "changelog";
 
 export type ModuleId = "proposal" | "marketing" | "admin";
