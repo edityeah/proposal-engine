@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { put } from "@vercel/blob";
 import { extractRfpText } from "@/lib/rfp";
+import { addKnowledge } from "@/lib/db/knowledge";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -15,6 +16,10 @@ export async function POST(req: Request) {
 
   const form = await req.formData();
   const file = form.get("file");
+  // Set by the Generate form's "Responding to an RFP?" upload, so the RFP is also
+  // saved to the RFP library (the shared Co-Pilot/chat attach does not set it).
+  const toLibrary = form.get("toLibrary") === "1";
+  const state = String(form.get("state") || "") || null;
   if (!(file instanceof File)) {
     return Response.json({ error: "No file uploaded" }, { status: 400 });
   }
@@ -58,10 +63,33 @@ export async function POST(req: Request) {
     blobUrl = null;
   }
 
+  // Also push it to the RFP library so it's browsable/reusable there.
+  let libraryId: string | null = null;
+  if (toLibrary) {
+    try {
+      const row = await addKnowledge({
+        uploadedBy: session.user.id,
+        kind: "rfp",
+        title: file.name,
+        state,
+        tags: [],
+        blobUrl,
+        filename: file.name,
+        text: extracted.text,
+        words: extracted.words,
+      });
+      libraryId = row.id;
+    } catch {
+      // Non-fatal — the upload/extraction still succeeded; just skip the library copy.
+      libraryId = null;
+    }
+  }
+
   return Response.json({
     text: extracted.text,
     words: extracted.words,
     filename: file.name,
     blobUrl,
+    libraryId,
   });
 }
