@@ -36,11 +36,26 @@ export default function CurationStudio() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
+  const [seeding, setSeeding] = useState(false);
 
   function load() {
     fetch("/api/curation").then((r) => r.json()).then((d) => setEntries(d.entries || []));
   }
   useEffect(load, []);
+
+  async function seedPab() {
+    setSeeding(true); setErr("");
+    try {
+      const res = await fetch("/api/curation/seed-pab", { method: "POST" });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(d.error || "Seed failed");
+      load();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Seed failed");
+    } finally {
+      setSeeding(false);
+    }
+  }
 
   function startNew() { setDraft(BLANK); setEditingId(null); setErr(""); }
   function edit(e: Entry) {
@@ -86,7 +101,12 @@ export default function CurationStudio() {
     <>
       <div className="topbar">
         <div className="topbar-left"><div className="topbar-title">Curation studio</div></div>
-        <div className="topbar-right"><button className="btn btn-primary" onClick={startNew}><i className="ti ti-plus" /> New entry</button></div>
+        <div className="topbar-right">
+          <button className="btn btn-outline" onClick={seedPab} disabled={seeding} title="Add the standard PAB-note guidance (idempotent)">
+            {seeding ? <><span className="spinner-ring" /> Seeding…</> : <><i className="ti ti-building-bank" /> Seed PAB guidance</>}
+          </button>
+          <button className="btn btn-primary" onClick={startNew}><i className="ti ti-plus" /> New entry</button>
+        </div>
       </div>
       <div className="page-content">
         <div className="banner info" style={{ marginBottom: 16 }}>
