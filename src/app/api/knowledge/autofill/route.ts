@@ -36,7 +36,7 @@ function parseOut(raw: string): { doctype: string; title: string; state: string;
 }
 
 async function callOpenAI(system: string, user: string): Promise<string> {
-  const OpenAI = (await import("openai")).default; // DEMO-ONLY path
+  const OpenAI = (await import("openai")).default; // fallback provider when no Anthropic key is set
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const res = await client.chat.completions.create({
     model: process.env.OPENAI_AUTOFILL_MODEL || "gpt-4o-mini",
