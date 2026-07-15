@@ -125,7 +125,7 @@ export async function POST(req: Request) {
         saving = false;
       };
       try {
-        await generate({ // DEMO-ONLY: `generate` is streamProposal unless demo mode swapped it to OpenAI
+        await generate({
           system: systemPrompt,
           user: userPrompt,
           onText: (delta) => {
