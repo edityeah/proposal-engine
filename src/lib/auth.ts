@@ -9,8 +9,10 @@ import { cookies } from "next/headers";
 const ALLOWED_DOMAIN = process.env.ALLOWED_EMAIL_DOMAIN || "convegenius.ai";
 
 // Local dev escape hatch: when DEV_NO_AUTH is set, skip Google/DB auth entirely
-// and treat every request as a fixed admin user. Never enable in production.
-const DEV_NO_AUTH = process.env.DEV_NO_AUTH === "1";
+// and treat every request as a fixed admin user. Hard-gated to non-production so
+// a stray env var can never disable auth on prod.
+const DEV_NO_AUTH =
+  process.env.DEV_NO_AUTH === "1" && process.env.NODE_ENV !== "production";
 
 // Two dev "accounts" so both portals can be exercised without real auth.
 function devSession(role: "admin" | "operator") {

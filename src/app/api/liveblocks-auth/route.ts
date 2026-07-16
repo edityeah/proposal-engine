@@ -35,7 +35,7 @@ export async function POST(req: Request) {
   // Dev-only: while DEV_NO_AUTH is on, auth() returns one fixed user, so a
   // `?devUser=NAME` param lets you simulate distinct viewers across windows.
   // Ignored entirely in production (DEV_NO_AUTH is never set there).
-  if (process.env.DEV_NO_AUTH === "1" && body.devUser) {
+  if (process.env.DEV_NO_AUTH === "1" && process.env.NODE_ENV !== "production" && body.devUser) {
     name = body.devUser;
     id = `dev-${body.devUser}`;
   }
