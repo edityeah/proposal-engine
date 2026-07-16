@@ -45,6 +45,23 @@ function scoped(s?: Scope): boolean {
   return !!s && s.role !== "admin" && !!s.state;
 }
 
+// Build a Scope from a session user (role + state).
+export function scopeFromSession(u: { role?: string; state?: string | null }): Scope {
+  return { role: u.role ?? "operator", state: u.state ?? null };
+}
+
+// Can this scope access this specific proposal? Mirrors listProposals' rule:
+// state-scoped operators only reach proposals in their own state; admins and
+// unassigned operators reach everything. Absent proposal → no access.
+export function canAccessProposal(
+  proposal: { state: string | null } | null | undefined,
+  s?: Scope,
+): boolean {
+  if (!proposal) return false;
+  if (!scoped(s)) return true;
+  return proposal.state === s!.state;
+}
+
 // History, optionally scoped to the viewer's state. Newest first.
 export async function listProposals(limit = 100, s?: Scope) {
   if (scoped(s)) {

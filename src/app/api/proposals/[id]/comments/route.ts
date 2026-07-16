@@ -1,13 +1,32 @@
 import { auth } from "@/lib/auth";
-import { listProposalComments, addProposalComment } from "@/lib/db/queries";
+import {
+  listProposalComments,
+  addProposalComment,
+  getProposal,
+  canAccessProposal,
+  scopeFromSession,
+} from "@/lib/db/queries";
 
 export const runtime = "nodejs";
+
+// Confirms the caller can access this proposal; returns a Response to bail with,
+// or null to proceed.
+async function guard(id: string, user: { role?: string; state?: string | null }) {
+  const proposal = await getProposal(id);
+  if (!proposal) return Response.json({ error: "Not found" }, { status: 404 });
+  if (!canAccessProposal(proposal, scopeFromSession(user))) {
+    return Response.json({ error: "Forbidden" }, { status: 403 });
+  }
+  return null;
+}
 
 // Comments on a document, visible to anyone who can open it.
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user?.id) return Response.json({ error: "Not authenticated" }, { status: 401 });
   const { id } = await params;
+  const blocked = await guard(id, session.user as { role?: string; state?: string | null });
+  if (blocked) return blocked;
   return Response.json({ comments: await listProposalComments(id) });
 }
 
@@ -15,6 +34,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const session = await auth();
   if (!session?.user?.id) return Response.json({ error: "Not authenticated" }, { status: 401 });
   const { id } = await params;
+  const blocked = await guard(id, session.user as { role?: string; state?: string | null });
+  if (blocked) return blocked;
   const b = (await req.json().catch(() => ({}))) as {
     quote?: string; body?: string; forId?: string | null; forName?: string | null;
   };

@@ -1,5 +1,6 @@
 import { Liveblocks } from "@liveblocks/node";
 import { auth } from "@/lib/auth";
+import { getProposal, canAccessProposal, scopeFromSession } from "@/lib/db/queries";
 
 export const runtime = "nodejs";
 
@@ -45,9 +46,17 @@ export async function POST(req: Request) {
     userInfo: { name, email, avatar },
   });
 
-  // Only ever grant access to per-proposal presence rooms.
+  // Only grant access to a per-proposal presence room, and only if the caller
+  // can actually access that proposal under their state scope. This stops any
+  // signed-in user from joining the presence room of a proposal outside their
+  // scope. (DEV_NO_AUTH's fixed admin passes, as intended in dev.)
   if (typeof body.room === "string" && body.room.startsWith("proposal-")) {
-    lbSession.allow(body.room, lbSession.FULL_ACCESS);
+    const proposalId = body.room.slice("proposal-".length);
+    const proposal = await getProposal(proposalId).catch(() => null);
+    const scope = scopeFromSession(session.user as { role?: string; state?: string | null });
+    if (proposal && canAccessProposal(proposal, scope)) {
+      lbSession.allow(body.room, lbSession.FULL_ACCESS);
+    }
   }
 
   const { status, body: authBody } = await lbSession.authorize();
